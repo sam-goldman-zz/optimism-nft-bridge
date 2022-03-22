@@ -1,0 +1,13 @@
+import { HardhatUserConfig } from 'hardhat/types';
+import 'solidity-coverage';
+import '@nomiclabs/hardhat-ethers';
+import '@nomiclabs/hardhat-waffle';
+import '@nomiclabs/hardhat-etherscan';
+import 'hardhat-deploy';
+import '@typechain/hardhat';
+import './tasks';
+import 'hardhat-gas-reporter';
+import '@primitivefi/hardhat-dodoc';
+import 'hardhat-output-validator';
+declare const config: HardhatUserConfig;
+export default config;

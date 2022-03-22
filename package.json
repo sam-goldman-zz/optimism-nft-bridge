@@ -18,7 +18,7 @@
   ],
   "scripts": {
     "build": "yarn build:contracts && yarn autogen:artifacts && yarn build:typescript",
-    "build:typescript": "tsc -p ./tsconfig.build.json",
+    "build:typescript": "tsc -p .",
     "build:contracts": "hardhat compile --show-stack-traces",
     "build:dump": "ts-node bin/take-dump.ts",
     "autogen:markdown": "ts-node scripts/generate-markdown.ts",
@@ -36,7 +36,7 @@
     "lint:contracts:fix": "yarn prettier --write 'contracts/**/*.sol'",
     "lint:fix": "yarn lint:contracts:fix && yarn lint:ts:fix",
     "lint": "yarn lint:fix && yarn lint:check",
-    "clean": "rm -rf ./dist ./artifacts ./cache ./coverage ./tsconfig.build.tsbuildinfo",
+    "clean": "rm -rf ./build ./artifacts ./artifacts-ovm ./cache ./cache-ovm",
     "prepublishOnly": "yarn copyfiles -u 1 -e \"**/test-*/**/*\" \"contracts/**/*\" ./",
     "postpublish": "rimraf chugsplash L1 L2 libraries standards",
     "prepack": "yarn prepublishOnly",
