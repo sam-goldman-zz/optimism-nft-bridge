@@ -1,3 +1,5 @@
+import _ from "lodash"
+
 /**
  * Predeploys are Solidity contracts that are injected into the initial L2 state and provide
  * various useful functions.
@@ -16,6 +18,7 @@ export const predeploys = {
   OVM_SequencerFeeVault: '0x4200000000000000000000000000000000000011',
   L2StandardTokenFactory: '0x4200000000000000000000000000000000000012',
   OVM_L1BlockNumber: '0x4200000000000000000000000000000000000013',
+  L2ERC721Bridge: '0x4200000000000000000000000000000000000043', // Placeholder
 
   // We're temporarily disabling OVM_ETH because the jury is still out on whether or not ETH as an
   // ERC20 is desirable.

@@ -131,236 +131,241 @@ try {
     L2StandardBridge = require('../artifacts/contracts/L2/messaging/L2StandardBridge.sol/L2StandardBridge.json');
 }
 catch (_1) { }
+let L2StandardERC721Factory;
+try {
+    L2StandardERC721Factory = require('../artifacts/contracts/L2/messaging/L2StandardERC721Factory.sol/L2StandardERC721Factory.json');
+}
+catch (_2) { }
 let L2StandardTokenFactory;
 try {
     L2StandardTokenFactory = require('../artifacts/contracts/L2/messaging/L2StandardTokenFactory.sol/L2StandardTokenFactory.json');
 }
-catch (_2) { }
+catch (_3) { }
 let iOVM_L1BlockNumber;
 try {
     iOVM_L1BlockNumber = require('../artifacts/contracts/L2/predeploys/iOVM_L1BlockNumber.sol/iOVM_L1BlockNumber.json');
 }
-catch (_3) { }
+catch (_4) { }
 let iOVM_L2ToL1MessagePasser;
 try {
     iOVM_L2ToL1MessagePasser = require('../artifacts/contracts/L2/predeploys/iOVM_L2ToL1MessagePasser.sol/iOVM_L2ToL1MessagePasser.json');
 }
-catch (_4) { }
+catch (_5) { }
 let OVM_DeployerWhitelist;
 try {
     OVM_DeployerWhitelist = require('../artifacts/contracts/L2/predeploys/OVM_DeployerWhitelist.sol/OVM_DeployerWhitelist.json');
 }
-catch (_5) { }
+catch (_6) { }
 let OVM_ETH;
 try {
     OVM_ETH = require('../artifacts/contracts/L2/predeploys/OVM_ETH.sol/OVM_ETH.json');
 }
-catch (_6) { }
+catch (_7) { }
 let OVM_GasPriceOracle;
 try {
     OVM_GasPriceOracle = require('../artifacts/contracts/L2/predeploys/OVM_GasPriceOracle.sol/OVM_GasPriceOracle.json');
 }
-catch (_7) { }
+catch (_8) { }
 let OVM_L2ToL1MessagePasser;
 try {
     OVM_L2ToL1MessagePasser = require('../artifacts/contracts/L2/predeploys/OVM_L2ToL1MessagePasser.sol/OVM_L2ToL1MessagePasser.json');
 }
-catch (_8) { }
+catch (_9) { }
 let OVM_SequencerFeeVault;
 try {
     OVM_SequencerFeeVault = require('../artifacts/contracts/L2/predeploys/OVM_SequencerFeeVault.sol/OVM_SequencerFeeVault.json');
 }
-catch (_9) { }
+catch (_10) { }
 let WETH9;
 try {
     WETH9 = require('../artifacts/contracts/L2/predeploys/WETH9.sol/WETH9.json');
 }
-catch (_10) { }
+catch (_11) { }
 let TeleportrDisburser;
 try {
     TeleportrDisburser = require('../artifacts/contracts/L2/teleportr/TeleportrDisburser.sol/TeleportrDisburser.json');
 }
-catch (_11) { }
+catch (_12) { }
 let CrossDomainEnabled;
 try {
     CrossDomainEnabled = require('../artifacts/contracts/libraries/bridge/CrossDomainEnabled.sol/CrossDomainEnabled.json');
 }
-catch (_12) { }
+catch (_13) { }
 let ICrossDomainMessenger;
 try {
     ICrossDomainMessenger = require('../artifacts/contracts/libraries/bridge/ICrossDomainMessenger.sol/ICrossDomainMessenger.json');
 }
-catch (_13) { }
+catch (_14) { }
 let Lib_CrossDomainUtils;
 try {
     Lib_CrossDomainUtils = require('../artifacts/contracts/libraries/bridge/Lib_CrossDomainUtils.sol/Lib_CrossDomainUtils.json');
 }
-catch (_14) { }
+catch (_15) { }
 let Lib_OVMCodec;
 try {
     Lib_OVMCodec = require('../artifacts/contracts/libraries/codec/Lib_OVMCodec.sol/Lib_OVMCodec.json');
 }
-catch (_15) { }
+catch (_16) { }
 let Lib_DefaultValues;
 try {
     Lib_DefaultValues = require('../artifacts/contracts/libraries/constants/Lib_DefaultValues.sol/Lib_DefaultValues.json');
 }
-catch (_16) { }
+catch (_17) { }
 let Lib_PredeployAddresses;
 try {
     Lib_PredeployAddresses = require('../artifacts/contracts/libraries/constants/Lib_PredeployAddresses.sol/Lib_PredeployAddresses.json');
 }
-catch (_17) { }
+catch (_18) { }
 let Lib_AddressManager;
 try {
     Lib_AddressManager = require('../artifacts/contracts/libraries/resolver/Lib_AddressManager.sol/Lib_AddressManager.json');
 }
-catch (_18) { }
+catch (_19) { }
 let Lib_AddressResolver;
 try {
     Lib_AddressResolver = require('../artifacts/contracts/libraries/resolver/Lib_AddressResolver.sol/Lib_AddressResolver.json');
 }
-catch (_19) { }
+catch (_20) { }
 let Lib_ResolvedDelegateProxy;
 try {
     Lib_ResolvedDelegateProxy = require('../artifacts/contracts/libraries/resolver/Lib_ResolvedDelegateProxy.sol/Lib_ResolvedDelegateProxy.json');
 }
-catch (_20) { }
+catch (_21) { }
 let Lib_RLPReader;
 try {
     Lib_RLPReader = require('../artifacts/contracts/libraries/rlp/Lib_RLPReader.sol/Lib_RLPReader.json');
 }
-catch (_21) { }
+catch (_22) { }
 let Lib_RLPWriter;
 try {
     Lib_RLPWriter = require('../artifacts/contracts/libraries/rlp/Lib_RLPWriter.sol/Lib_RLPWriter.json');
 }
-catch (_22) { }
+catch (_23) { }
 let Lib_MerkleTrie;
 try {
     Lib_MerkleTrie = require('../artifacts/contracts/libraries/trie/Lib_MerkleTrie.sol/Lib_MerkleTrie.json');
 }
-catch (_23) { }
+catch (_24) { }
 let Lib_SecureMerkleTrie;
 try {
     Lib_SecureMerkleTrie = require('../artifacts/contracts/libraries/trie/Lib_SecureMerkleTrie.sol/Lib_SecureMerkleTrie.json');
 }
-catch (_24) { }
+catch (_25) { }
 let Lib_Buffer;
 try {
     Lib_Buffer = require('../artifacts/contracts/libraries/utils/Lib_Buffer.sol/Lib_Buffer.json');
 }
-catch (_25) { }
+catch (_26) { }
 let Lib_Bytes32Utils;
 try {
     Lib_Bytes32Utils = require('../artifacts/contracts/libraries/utils/Lib_Bytes32Utils.sol/Lib_Bytes32Utils.json');
 }
-catch (_26) { }
+catch (_27) { }
 let Lib_BytesUtils;
 try {
     Lib_BytesUtils = require('../artifacts/contracts/libraries/utils/Lib_BytesUtils.sol/Lib_BytesUtils.json');
 }
-catch (_27) { }
+catch (_28) { }
 let Lib_MerkleTree;
 try {
     Lib_MerkleTree = require('../artifacts/contracts/libraries/utils/Lib_MerkleTree.sol/Lib_MerkleTree.json');
 }
-catch (_28) { }
+catch (_29) { }
 let AddressAliasHelper;
 try {
     AddressAliasHelper = require('../artifacts/contracts/standards/AddressAliasHelper.sol/AddressAliasHelper.json');
 }
-catch (_29) { }
+catch (_30) { }
 let IL2StandardERC20;
 try {
     IL2StandardERC20 = require('../artifacts/contracts/standards/IL2StandardERC20.sol/IL2StandardERC20.json');
 }
-catch (_30) { }
+catch (_31) { }
 let IL2StandardERC721;
 try {
     IL2StandardERC721 = require('../artifacts/contracts/standards/IL2StandardERC721.sol/IL2StandardERC721.json');
 }
-catch (_31) { }
+catch (_32) { }
 let L2StandardERC20;
 try {
     L2StandardERC20 = require('../artifacts/contracts/standards/L2StandardERC20.sol/L2StandardERC20.json');
 }
-catch (_32) { }
+catch (_33) { }
 let L2StandardERC721;
 try {
     L2StandardERC721 = require('../artifacts/contracts/standards/L2StandardERC721.sol/L2StandardERC721.json');
 }
-catch (_33) { }
+catch (_34) { }
 let FailingReceiver;
 try {
     FailingReceiver = require('../artifacts/contracts/test-helpers/FailingReceiver.sol/FailingReceiver.json');
 }
-catch (_34) { }
+catch (_35) { }
 let Helper_SimpleProxy;
 try {
     Helper_SimpleProxy = require('../artifacts/contracts/test-helpers/Helper_SimpleProxy.sol/Helper_SimpleProxy.json');
 }
-catch (_35) { }
+catch (_36) { }
 let TestERC20;
 try {
     TestERC20 = require('../artifacts/contracts/test-helpers/TestERC20.sol/TestERC20.json');
 }
-catch (_36) { }
+catch (_37) { }
 let TestLib_CrossDomainUtils;
 try {
     TestLib_CrossDomainUtils = require('../artifacts/contracts/test-libraries/bridge/TestLib_CrossDomainUtils.sol/TestLib_CrossDomainUtils.json');
 }
-catch (_37) { }
+catch (_38) { }
 let TestLib_OVMCodec;
 try {
     TestLib_OVMCodec = require('../artifacts/contracts/test-libraries/codec/TestLib_OVMCodec.sol/TestLib_OVMCodec.json');
 }
-catch (_38) { }
+catch (_39) { }
 let TestLib_RLPReader;
 try {
     TestLib_RLPReader = require('../artifacts/contracts/test-libraries/rlp/TestLib_RLPReader.sol/TestLib_RLPReader.json');
 }
-catch (_39) { }
+catch (_40) { }
 let TestLib_RLPWriter;
 try {
     TestLib_RLPWriter = require('../artifacts/contracts/test-libraries/rlp/TestLib_RLPWriter.sol/TestLib_RLPWriter.json');
 }
-catch (_40) { }
+catch (_41) { }
 let TestLib_AddressAliasHelper;
 try {
     TestLib_AddressAliasHelper = require('../artifacts/contracts/test-libraries/standards/TestLib_AddressAliasHelper.sol/TestLib_AddressAliasHelper.json');
 }
-catch (_41) { }
+catch (_42) { }
 let TestLib_MerkleTrie;
 try {
     TestLib_MerkleTrie = require('../artifacts/contracts/test-libraries/trie/TestLib_MerkleTrie.sol/TestLib_MerkleTrie.json');
 }
-catch (_42) { }
+catch (_43) { }
 let TestLib_SecureMerkleTrie;
 try {
     TestLib_SecureMerkleTrie = require('../artifacts/contracts/test-libraries/trie/TestLib_SecureMerkleTrie.sol/TestLib_SecureMerkleTrie.json');
 }
-catch (_43) { }
+catch (_44) { }
 let TestLib_Buffer;
 try {
     TestLib_Buffer = require('../artifacts/contracts/test-libraries/utils/TestLib_Buffer.sol/TestLib_Buffer.json');
 }
-catch (_44) { }
+catch (_45) { }
 let TestLib_Bytes32Utils;
 try {
     TestLib_Bytes32Utils = require('../artifacts/contracts/test-libraries/utils/TestLib_Bytes32Utils.sol/TestLib_Bytes32Utils.json');
 }
-catch (_45) { }
+catch (_46) { }
 let TestLib_BytesUtils;
 try {
     TestLib_BytesUtils = require('../artifacts/contracts/test-libraries/utils/TestLib_BytesUtils.sol/TestLib_BytesUtils.json');
 }
-catch (_46) { }
+catch (_47) { }
 let TestLib_MerkleTree;
 try {
     TestLib_MerkleTree = require('../artifacts/contracts/test-libraries/utils/TestLib_MerkleTree.sol/TestLib_MerkleTree.json');
 }
-catch (_47) { }
+catch (_48) { }
 const getContractArtifact = (name) => {
     return {
         iL1ChugSplashDeployer,
@@ -389,6 +394,7 @@ const getContractArtifact = (name) => {
         L2CrossDomainMessenger,
         L2ERC721Bridge,
         L2StandardBridge,
+        L2StandardERC721Factory,
         L2StandardTokenFactory,
         iOVM_L1BlockNumber,
         iOVM_L2ToL1MessagePasser,

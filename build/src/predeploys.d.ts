@@ -7,6 +7,7 @@ export declare const predeploys: {
     OVM_SequencerFeeVault: string;
     L2StandardTokenFactory: string;
     OVM_L1BlockNumber: string;
+    L2ERC721Bridge: string;
     OVM_ETH: string;
     WETH9: string;
 };

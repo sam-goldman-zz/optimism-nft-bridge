@@ -165,6 +165,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.L2StandardBridge__factory>;
     getContractFactory(
+      name: "L2StandardERC721Factory",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.L2StandardERC721Factory__factory>;
+    getContractFactory(
       name: "L2StandardTokenFactory",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.L2StandardTokenFactory__factory>;
@@ -487,6 +491,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.L2StandardBridge>;
+    getContractAt(
+      name: "L2StandardERC721Factory",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.L2StandardERC721Factory>;
     getContractAt(
       name: "L2StandardTokenFactory",
       address: string,

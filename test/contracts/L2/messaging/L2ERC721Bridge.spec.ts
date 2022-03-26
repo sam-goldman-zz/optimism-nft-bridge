@@ -178,7 +178,10 @@ describe('L2ERC721Bridge', () => {
       })
     })
 
-    it('withdraw() burns and sends the correct withdrawal message', async () => {
+    it.only('withdraw() burns and sends the correct withdrawal message', async () => {
+      const uri = await Mock__L2Token.tokenURI(TOKEN_ID)
+      console.log(uri)
+
       await L2ERC721Bridge.withdraw(
         Mock__L2Token.address,
         TOKEN_ID,

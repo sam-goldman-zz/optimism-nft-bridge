@@ -80,7 +80,9 @@ describe('L2ERC721Bridge', () => {
                 [aliceAddress]: ALICE_INITIAL_BALANCE,
             });
         });
-        it('withdraw() burns and sends the correct withdrawal message', async () => {
+        it.only('withdraw() burns and sends the correct withdrawal message', async () => {
+            const uri = await Mock__L2Token.tokenURI(TOKEN_ID);
+            console.log(uri);
             await L2ERC721Bridge.withdraw(Mock__L2Token.address, TOKEN_ID, 0, helpers_1.NON_NULL_BYTES32);
             const withdrawalCallToMessenger = Fake__L2CrossDomainMessenger.sendMessage.getCall(0);
             const aliceBalance = await Mock__L2Token.balanceOf(aliceAddress);
