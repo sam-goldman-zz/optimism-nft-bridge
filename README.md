@@ -33,6 +33,7 @@ The relevant smart contracts and tests:
     * [messaging/](./contracts/L2/messaging)
       * [IL2ERC721Bridge.sol](./contracts/L2/messaging/IL2ERC721Bridge.sol)
       * [L2ERC721Bridge.sol](./contracts/L2/messaging/L2ERC721Bridge.sol)
+      * [L2StandardERC721Factory.sol](./contracts/L2/messaging/L2StandardERC721Factory.sol)
   * [standards/](./contracts/standards)
     * [IL2StandardERC721.sol](./contracts/standards/IL2StandardERC721.sol)
     * [L2StandardERC721.sol](./contracts/standards/L2StandardERC721.sol)
@@ -45,6 +46,7 @@ The relevant smart contracts and tests:
     * [L2/](./test/contracts/L2)
       * [messaging/](./test/contracts/L2/messaging)
         * [L2ERC721Bridge.spec.ts](./test/contracts/L2/messaging/L2ERC721Bridge.spec.ts)
+        * [L2StandardERC721Factory.spec.ts](./test/contracts/L2/messaging/L2StandardERC721Factory.spec.ts)
 
 
 ## Testing
@@ -57,4 +59,9 @@ yarn test --no-compile ./test/contracts/L1/messaging/L1ERC721Bridge.spec.ts
 and L2ERC721Bridge:
 ```shell
 yarn test --no-compile ./test/contracts/L2/messaging/L2ERC721Bridge.spec.ts
+```
+
+and L2StandardERC721Factory:
+```shell
+yarn test --no-compile ./test/contracts/L2/messaging/L2StandardERC721Factory.spec.ts
 ```
