@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
-import "hardhat/console.sol";
 
 /* Interface Imports */
 import { IL1ERC721Bridge } from "./IL1ERC721Bridge.sol";

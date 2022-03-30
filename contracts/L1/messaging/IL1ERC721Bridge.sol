@@ -35,7 +35,7 @@ interface IL1ERC721Bridge {
      * @dev get the address of the corresponding L2 bridge contract.
      * @return Address of the corresponding L2 bridge contract.
      */
-    function l2ERC721Bridge() external returns (address);
+    function l2TokenBridge() external returns (address);
 
     /**
      * @dev deposit the ERC721 token to the caller on L2.
