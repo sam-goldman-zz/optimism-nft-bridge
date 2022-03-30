@@ -14,7 +14,7 @@ contract L2StandardERC721Factory {
     event StandardL2ERC721Created(address indexed _l1Token, address indexed _l2Token);
 
     // Maps the L2 Standard ERC721 token address to the corresponding L1 token address
-    mapping(address => address) standardTokenAddresses;
+    mapping(address => address) public standardTokenAddresses;
 
     /**
      * @dev Creates an instance of the standard ERC721 token on L2.
