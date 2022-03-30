@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
-import "hardhat/console.sol";
 
 /* Interface Imports */
 import { IL1StandardBridge } from "./IL1StandardBridge.sol";
 import { IL1ERC20Bridge } from "./IL1ERC20Bridge.sol";
 import { IL2ERC20Bridge } from "../../L2/messaging/IL2ERC20Bridge.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { IL1ERC721Bridge } from "./IL1ERC721Bridge.sol";
+import { IL2ERC721Bridge } from "../../L2/messaging/IL2ERC721Bridge.sol";
+import { IERC721 } from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import { IERC721Receiver } from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
 /* Library Imports */
 import { CrossDomainEnabled } from "../../libraries/bridge/CrossDomainEnabled.sol";
@@ -16,12 +19,12 @@ import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 
 /**
  * @title L1StandardBridge
- * @dev The L1 ETH and ERC20 Bridge is a contract which stores deposited L1 funds and standard
- * tokens that are in use on L2. It synchronizes a corresponding L2 Bridge, informing it of deposits
- * and listening to it for newly finalized withdrawals.
+ * @dev The L1 Standard Bridge is a contract which stores deposited L1 ETH, ERC20, and ERC721
+ * tokens that are in use on L2. It synchronizes a corresponding L2 Bridge, informing it of
+ * deposits and listening to it for newly finalized withdrawals.
  *
  */
-contract L1StandardBridge is IL1StandardBridge, CrossDomainEnabled {
+contract L1StandardBridge is IL1StandardBridge, IERC721Receiver, CrossDomainEnabled {
     using SafeERC20 for IERC20;
 
     /********************************
@@ -30,8 +33,12 @@ contract L1StandardBridge is IL1StandardBridge, CrossDomainEnabled {
 
     address public l2TokenBridge;
 
-    // Maps L1 token to L2 token to balance of the L1 token deposited
-    mapping(address => mapping(address => uint256)) public deposits;
+    // Maps L1 ERC20 token to L2 ERC20 token to balance of the L1 token deposited
+    mapping(address => mapping(address => uint256)) public erc20Deposits;
+
+    // Maps L1 ERC721 token to L2 ERC721 token to token ID to a boolean indicating
+    // if the token is deposited
+    mapping(address => mapping(address => mapping(uint256 => bool))) public erc721Deposits;
 
     /***************
      * Constructor *
@@ -159,7 +166,7 @@ contract L1StandardBridge is IL1StandardBridge, CrossDomainEnabled {
     }
 
     /**
-     * @dev Performs the logic for deposits by informing the L2 Deposited Token
+     * @dev Performs the logic for ERC20 deposits by informing the L2 Deposited Token
      * contract of the deposit and calling a handler to lock the L1 funds. (e.g. transferFrom)
      *
      * @param _l1Token Address of the L1 ERC20 we are depositing
@@ -203,10 +210,91 @@ contract L1StandardBridge is IL1StandardBridge, CrossDomainEnabled {
         sendCrossDomainMessage(l2TokenBridge, _l2Gas, message);
 
         // slither-disable-next-line reentrancy-benign
-        deposits[_l1Token][_l2Token] = deposits[_l1Token][_l2Token] + _amount;
+        erc20Deposits[_l1Token][_l2Token] = erc20Deposits[_l1Token][_l2Token] + _amount;
 
         // slither-disable-next-line reentrancy-events
         emit ERC20DepositInitiated(_l1Token, _l2Token, _from, _to, _amount, _data);
+    }
+
+    /**
+     * @inheritdoc IL1ERC721Bridge
+     */
+    function depositERC721(
+        address _l1Token,
+        address _l2Token,
+        uint256 _tokenId,
+        uint32 _l2Gas,
+        bytes calldata _data
+    ) external virtual {
+        // Modifier requiring sender to be EOA.  This check could be bypassed by a malicious
+        // contract via initcode, but it takes care of the user error we want to avoid.
+        require(!Address.isContract(msg.sender), "Account not EOA");
+
+        _initiateERC721Deposit(_l1Token, _l2Token, msg.sender, msg.sender, _tokenId, _l2Gas, _data);
+    }
+
+    /**
+     * @inheritdoc IL1ERC721Bridge
+     */
+    function depositERC721To(
+        address _l1Token,
+        address _l2Token,
+        address _to,
+        uint256 _tokenId,
+        uint32 _l2Gas,
+        bytes calldata _data
+    ) external virtual {
+        _initiateERC721Deposit(_l1Token, _l2Token, msg.sender, _to, _tokenId, _l2Gas, _data);
+    }
+
+    /**
+     * @dev Performs the logic for deposits by informing the L2 Deposited Token
+     * contract of the deposit and calling a handler to lock the L1 NFT. (e.g. transferFrom)
+     *
+     * @param _l1Token Address of the L1 ERC721 we are depositing
+     * @param _l2Token Address of the L1 respective L2 ERC721
+     * @param _from Account to pull the deposit from on L1
+     * @param _to Account to give the deposit to on L2
+     * @param _tokenId Token ID of the ERC721 to deposit.
+     * @param _l2Gas Gas limit required to complete the deposit on L2.
+     * @param _data Optional data to forward to L2. This data is provided
+     *        solely as a convenience for external contracts. Aside from enforcing a maximum
+     *        length, these contracts provide no guarantees about its content.
+     */
+    function _initiateERC721Deposit(
+        address _l1Token,
+        address _l2Token,
+        address _from,
+        address _to,
+        uint256 _tokenId,
+        uint32 _l2Gas,
+        bytes calldata _data
+    ) internal {
+        // When a deposit is initiated on L1, the L1 Bridge transfers the NFT to itself for future
+        // withdrawals.
+        // slither-disable-next-line reentrancy-events, reentrancy-benign
+        IERC721(_l1Token).safeTransferFrom(_from, address(this), _tokenId);
+
+        // Construct calldata for _l2Token.finalizeDeposit(_to, _tokenId)
+        bytes memory message = abi.encodeWithSelector(
+            IL2ERC721Bridge.finalizeDeposit.selector,
+            _l1Token,
+            _l2Token,
+            _from,
+            _to,
+            _tokenId,
+            _data
+        );
+
+        // Send calldata into L2
+        // slither-disable-next-line reentrancy-events, reentrancy-benign
+        sendCrossDomainMessage(l2TokenBridge, _l2Gas, message);
+
+        // slither-disable-next-line reentrancy-benign
+        erc721Deposits[_l1Token][_l2Token][_tokenId] = true;
+
+        // slither-disable-next-line reentrancy-events
+        emit ERC721DepositInitiated(_l1Token, _l2Token, _from, _to, _tokenId, _data);
     }
 
     /*************************
@@ -241,7 +329,7 @@ contract L1StandardBridge is IL1StandardBridge, CrossDomainEnabled {
         uint256 _amount,
         bytes calldata _data
     ) external onlyFromCrossDomainAccount(l2TokenBridge) {
-        deposits[_l1Token][_l2Token] = deposits[_l1Token][_l2Token] - _amount;
+        erc20Deposits[_l1Token][_l2Token] = erc20Deposits[_l1Token][_l2Token] - _amount;
 
         // When a withdrawal is finalized on L1, the L1 Bridge transfers the funds to the withdrawer
         // slither-disable-next-line reentrancy-events
@@ -249,6 +337,43 @@ contract L1StandardBridge is IL1StandardBridge, CrossDomainEnabled {
 
         // slither-disable-next-line reentrancy-events
         emit ERC20WithdrawalFinalized(_l1Token, _l2Token, _from, _to, _amount, _data);
+    }
+
+    /**
+     * @inheritdoc IL1ERC721Bridge
+     */
+    function finalizeERC721Withdrawal(
+        address _l1Token,
+        address _l2Token,
+        address _from,
+        address _to,
+        uint256 _tokenId,
+        bytes calldata _data
+    ) external onlyFromCrossDomainAccount(l2TokenBridge) {
+        erc721Deposits[_l1Token][_l2Token][_tokenId] = false;
+
+        // When a withdrawal is finalized on L1, the L1 Bridge transfers the NFT to the withdrawer
+        // slither-disable-next-line reentrancy-events
+        IERC721(_l1Token).safeTransferFrom(address(this), _to, _tokenId);
+
+        // slither-disable-next-line reentrancy-events
+        emit ERC721WithdrawalFinalized(_l1Token, _l2Token, _from, _to, _tokenId, _data);
+    }
+
+    /***********************************
+     * Supporting ERC721 safeTransfers *
+     ***********************************/
+
+    /**
+     * @inheritdoc IERC721Receiver
+     */
+    function onERC721Received(
+        address operator,
+        address from,
+        uint256 tokenId,
+        bytes calldata data
+    ) external pure returns (bytes4) {
+        return IERC721Receiver.onERC721Received.selector;
     }
 
     /*****************************
