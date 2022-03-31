@@ -121,9 +121,9 @@ contract L1StandardBridge is IL1StandardBridge, IERC721Receiver, CrossDomainEnab
         uint32 _l2Gas,
         bytes memory _data
     ) internal {
-        // Construct calldata for finalizeERC721Deposit call
+        // Construct calldata for finalizeERC20Deposit call
         bytes memory message = abi.encodeWithSelector(
-            IL2ERC20Bridge.finalizeERC721Deposit.selector,
+            IL2ERC20Bridge.finalizeERC20Deposit.selector,
             address(0),
             Lib_PredeployAddresses.OVM_ETH,
             _from,
@@ -196,9 +196,9 @@ contract L1StandardBridge is IL1StandardBridge, IERC721Receiver, CrossDomainEnab
         // slither-disable-next-line reentrancy-events, reentrancy-benign
         IERC20(_l1Token).safeTransferFrom(_from, address(this), _amount);
 
-        // Construct calldata for _l2Token.finalizeERC721Deposit(_to, _amount)
+        // Construct calldata for _l2Token.finalizeERC20Deposit(_to, _amount)
         bytes memory message = abi.encodeWithSelector(
-            IL2ERC20Bridge.finalizeERC721Deposit.selector,
+            IL2ERC20Bridge.finalizeERC20Deposit.selector,
             _l1Token,
             _l2Token,
             _from,

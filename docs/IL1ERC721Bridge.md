@@ -72,10 +72,10 @@ function finalizeERC721Withdrawal(address _l1Token, address _l2Token, address _f
 | _tokenId | uint256 | Token ID of the ERC721 to deposit.
 | _data | bytes | Data provided by the sender on L2. This data is provided   solely as a convenience for external contracts. Aside from enforcing a maximum   length, these contracts provide no guarantees about its content.
 
-### l2ERC721Bridge
+### l2TokenBridge
 
 ```solidity
-function l2ERC721Bridge() external nonpayable returns (address)
+function l2TokenBridge() external nonpayable returns (address)
 ```
 
 

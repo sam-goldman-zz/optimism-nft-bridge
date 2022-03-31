@@ -32,7 +32,7 @@ contract L2StandardBridge is IL2ERC20Bridge, IL2ERC721Bridge, CrossDomainEnabled
      * External Contract References *
      ********************************/
 
-    address public l1TokenBridge;
+    address public override(IL2ERC20Bridge, IL2ERC721Bridge) l1TokenBridge;
 
     /***************
      * Constructor *
@@ -164,8 +164,8 @@ contract L2StandardBridge is IL2ERC20Bridge, IL2ERC721Bridge, CrossDomainEnabled
      * @inheritdoc IL2ERC721Bridge
      */
     function withdrawERC721(
-        uint256 _tokenId,
         address _l2Token,
+        uint256 _tokenId,
         uint32 _l1Gas,
         bytes calldata _data
     ) external virtual {
@@ -297,7 +297,7 @@ contract L2StandardBridge is IL2ERC20Bridge, IL2ERC721Bridge, CrossDomainEnabled
         uint256 _amount,
         bytes calldata _data
     ) external virtual onlyFromCrossDomainAccount(l1TokenBridge) {
-        finalizeERC20Deposit(_l1Token, _l2Token, _from, _to, _amount, _data);
+        this.finalizeERC20Deposit(_l1Token, _l2Token, _from, _to, _amount, _data);
     }
 
     /**
