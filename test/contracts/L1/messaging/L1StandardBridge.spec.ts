@@ -26,7 +26,7 @@ const DUMMY_L2_BRIDGE_ADDRESS = ethers.utils.getAddress(
 const INITIAL_TOTAL_L1_SUPPLY = 5000
 const FINALIZATION_GAS = 1_200_000
 
-describe('L1StandardBridge: ERC721 tests', () => {
+describe('L1StandardBridge', () => {
   // init signers
   let l1MessengerImpersonator: Signer
   let alice: Signer
@@ -406,7 +406,7 @@ describe('L1StandardBridge: ERC721 tests', () => {
     })
 
     it('cannot depositERC20 from a contract account', async () => {
-      expect(
+      await expect(
         L1StandardBridge.depositERC20(
           L1ERC20.address,
           DUMMY_L2_ERC20_ADDRESS,

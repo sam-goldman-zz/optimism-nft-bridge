@@ -28,28 +28,6 @@ function createStandardL2ERC721(address _l1Token, string _name, string _symbol) 
 | _name | string | ERC721 name.
 | _symbol | string | ERC721 symbol.
 
-### isStandardERC721
-
-```solidity
-function isStandardERC721(address) external view returns (bool)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | bool | undefined
-
 
 
 ## Events

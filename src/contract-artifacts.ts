@@ -60,6 +60,12 @@
         } catch {}
         
 
+        let L1ERC721Bridge
+        try {
+          L1ERC721Bridge = require('../artifacts/contracts/L1/messaging/L1ERC721Bridge.sol/L1ERC721Bridge.json')
+        } catch {}
+        
+
         let L1StandardBridge
         try {
           L1StandardBridge = require('../artifacts/contracts/L1/messaging/L1StandardBridge.sol/L1StandardBridge.json')
@@ -141,6 +147,12 @@
         let L2CrossDomainMessenger
         try {
           L2CrossDomainMessenger = require('../artifacts/contracts/L2/messaging/L2CrossDomainMessenger.sol/L2CrossDomainMessenger.json')
+        } catch {}
+        
+
+        let L2ERC721Bridge
+        try {
+          L2ERC721Bridge = require('../artifacts/contracts/L2/messaging/L2ERC721Bridge.sol/L2ERC721Bridge.json')
         } catch {}
         
 
@@ -443,6 +455,7 @@ IL1ERC20Bridge,
 IL1ERC721Bridge,
 IL1StandardBridge,
 L1CrossDomainMessenger,
+L1ERC721Bridge,
 L1StandardBridge,
 CanonicalTransactionChain,
 ChainStorageContainer,
@@ -457,6 +470,7 @@ IL2CrossDomainMessenger,
 IL2ERC20Bridge,
 IL2ERC721Bridge,
 L2CrossDomainMessenger,
+L2ERC721Bridge,
 L2StandardBridge,
 L2StandardERC721Factory,
 L2StandardTokenFactory,

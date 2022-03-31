@@ -10,10 +10,10 @@
 
 ## Methods
 
-### finalizeERC721Deposit
+### finalizeDeposit
 
 ```solidity
-function finalizeERC721Deposit(address _l1Token, address _l2Token, address _from, address _to, uint256 _tokenId, bytes _data) external nonpayable
+function finalizeDeposit(address _l1Token, address _l2Token, address _from, address _to, uint256 _tokenId, bytes _data) external nonpayable
 ```
 
 
@@ -31,10 +31,10 @@ function finalizeERC721Deposit(address _l1Token, address _l2Token, address _from
 | _tokenId | uint256 | Token ID to withdraw
 | _data | bytes | Data provider by the sender on L1. This data is provided        solely as a convenience for external contracts. Aside from enforcing a maximum        length, these contracts provide no guarantees about its content.
 
-### l1TokenBridge
+### l1ERC721Bridge
 
 ```solidity
-function l1TokenBridge() external nonpayable returns (address)
+function l1ERC721Bridge() external nonpayable returns (address)
 ```
 
 
@@ -48,15 +48,15 @@ function l1TokenBridge() external nonpayable returns (address)
 |---|---|---|
 | _0 | address | Address of the corresponding L1 bridge contract.
 
-### withdrawERC721
+### withdraw
 
 ```solidity
-function withdrawERC721(address _l2Token, uint256 _tokenId, uint32 _l1Gas, bytes _data) external nonpayable
+function withdraw(address _l2Token, uint256 _tokenId, uint32 _l1Gas, bytes _data) external nonpayable
 ```
 
 
 
-*initiate a withdrawal of an NFT to the caller&#39;s account on L1*
+*initiate a withdraw of an NFT to the caller&#39;s account on L1*
 
 #### Parameters
 
@@ -67,10 +67,10 @@ function withdrawERC721(address _l2Token, uint256 _tokenId, uint32 _l1Gas, bytes
 | _l1Gas | uint32 | Unused, but included for potential forward compatibility considerations.
 | _data | bytes | Optional data to forward to L1. This data is provided        solely as a convenience for external contracts. Aside from enforcing a maximum        length, these contracts provide no guarantees about its content.
 
-### withdrawERC721To
+### withdrawTo
 
 ```solidity
-function withdrawERC721To(address _l2Token, address _to, uint256 _tokenId, uint32 _l1Gas, bytes _data) external nonpayable
+function withdrawTo(address _l2Token, address _to, uint256 _tokenId, uint32 _l1Gas, bytes _data) external nonpayable
 ```
 
 
@@ -91,10 +91,10 @@ function withdrawERC721To(address _l2Token, address _to, uint256 _tokenId, uint3
 
 ## Events
 
-### ERC721DepositFailed
+### DepositFailed
 
 ```solidity
-event ERC721DepositFailed(address indexed _l1Token, address indexed _l2Token, address indexed _from, address _to, uint256 _tokenId, bytes _data)
+event DepositFailed(address indexed _l1Token, address indexed _l2Token, address indexed _from, address _to, uint256 _tokenId, bytes _data)
 ```
 
 
@@ -112,10 +112,10 @@ event ERC721DepositFailed(address indexed _l1Token, address indexed _l2Token, ad
 | _tokenId  | uint256 | undefined |
 | _data  | bytes | undefined |
 
-### ERC721DepositFinalized
+### DepositFinalized
 
 ```solidity
-event ERC721DepositFinalized(address indexed _l1Token, address indexed _l2Token, address indexed _from, address _to, uint256 _tokenId, bytes _data)
+event DepositFinalized(address indexed _l1Token, address indexed _l2Token, address indexed _from, address _to, uint256 _tokenId, bytes _data)
 ```
 
 
@@ -133,10 +133,10 @@ event ERC721DepositFinalized(address indexed _l1Token, address indexed _l2Token,
 | _tokenId  | uint256 | undefined |
 | _data  | bytes | undefined |
 
-### ERC721WithdrawalInitiated
+### WithdrawalInitiated
 
 ```solidity
-event ERC721WithdrawalInitiated(address indexed _l1Token, address indexed _l2Token, address indexed _from, address _to, uint256 _tokenId, bytes _data)
+event WithdrawalInitiated(address indexed _l1Token, address indexed _l2Token, address indexed _from, address _to, uint256 _tokenId, bytes _data)
 ```
 
 

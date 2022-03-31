@@ -2,12 +2,11 @@
 pragma solidity >0.5.0 <0.9.0;
 
 import "./IL1ERC20Bridge.sol";
-import "./IL1ERC721Bridge.sol";
 
 /**
  * @title IL1StandardBridge
  */
-interface IL1StandardBridge is IL1ERC20Bridge, IL1ERC721Bridge {
+interface IL1StandardBridge is IL1ERC20Bridge {
     /**********
      * Events *
      **********/
@@ -28,12 +27,6 @@ interface IL1StandardBridge is IL1ERC20Bridge, IL1ERC721Bridge {
     /********************
      * Public Functions *
      ********************/
-
-    /**
-     * @dev get the address of the corresponding L2 bridge contract.
-     * @return Address of the corresponding L2 bridge contract.
-     */
-    function l2TokenBridge() external override(IL1ERC20Bridge, IL1ERC721Bridge) returns (address);
 
     /**
      * @dev Deposit an amount of the ETH to the caller's balance on L2.

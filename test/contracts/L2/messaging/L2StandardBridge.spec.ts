@@ -63,7 +63,7 @@ describe('L2StandardBridge', () => {
 
   // test the transfer flow of moving a token from L2 to L1
   describe('finalizeDeposit', () => {
-    it('onlyFromCrossDomainAccount: should revert on calls from a non-crossDomainMessenger L2 account', async () => {
+    it.only('onlyFromCrossDomainAccount: should revert on calls from a non-crossDomainMessenger L2 account', async () => {
       await expect(
         L2StandardBridge.finalizeDeposit(
           DUMMY_L1TOKEN_ADDRESS,

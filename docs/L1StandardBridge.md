@@ -6,7 +6,7 @@
 
 
 
-*The L1 Standard Bridge is a contract which stores deposited L1 ETH, ERC20, and ERC721 tokens that are in use on L2. It synchronizes a corresponding L2 Bridge, informing it of deposits and listening to it for newly finalized withdrawals.*
+*The L1 ETH and ERC20 Bridge is a contract which stores deposited L1 funds and standard tokens that are in use on L2. It synchronizes a corresponding L2 Bridge, informing it of deposits and listening to it for newly finalized withdrawals.*
 
 ## Methods
 
@@ -48,47 +48,6 @@ function depositERC20To(address _l1Token, address _l2Token, address _to, uint256
 | _l2Token | address | Address of the L1 respective L2 ERC20
 | _to | address | L2 address to credit the withdrawal to.
 | _amount | uint256 | Amount of the ERC20 to deposit.
-| _l2Gas | uint32 | Gas limit required to complete the deposit on L2.
-| _data | bytes | Optional data to forward to L2. This data is provided        solely as a convenience for external contracts. Aside from enforcing a maximum        length, these contracts provide no guarantees about its content.
-
-### depositERC721
-
-```solidity
-function depositERC721(address _l1Token, address _l2Token, uint256 _tokenId, uint32 _l2Gas, bytes _data) external nonpayable
-```
-
-
-
-*deposit the ERC721 token to the caller on L2.*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| _l1Token | address | Address of the L1 ERC721 we are depositing
-| _l2Token | address | Address of the L1 respective L2 ERC721
-| _tokenId | uint256 | Token ID of the ERC721 to deposit
-| _l2Gas | uint32 | Gas limit required to complete the deposit on L2.
-| _data | bytes | Optional data to forward to L2. This data is provided        solely as a convenience for external contracts. Aside from enforcing a maximum        length, these contracts provide no guarantees about its content.
-
-### depositERC721To
-
-```solidity
-function depositERC721To(address _l1Token, address _l2Token, address _to, uint256 _tokenId, uint32 _l2Gas, bytes _data) external nonpayable
-```
-
-
-
-*deposit the ERC721 token to a recipient on L2.*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| _l1Token | address | Address of the L1 ERC721 we are depositing
-| _l2Token | address | Address of the L1 respective L2 ERC721
-| _to | address | L2 address to credit the withdrawal to.
-| _tokenId | uint256 | Token ID of the ERC721 to deposit.
 | _l2Gas | uint32 | Gas limit required to complete the deposit on L2.
 | _data | bytes | Optional data to forward to L2. This data is provided        solely as a convenience for external contracts. Aside from enforcing a maximum        length, these contracts provide no guarantees about its content.
 
@@ -161,30 +120,6 @@ function donateETH() external payable
 *Adds ETH balance to the account. This is meant to allow for ETH to be migrated from an old gateway to a new gateway. NOTE: This is left for one upgrade only so we are able to receive the migrated ETH from the old contract*
 
 
-### erc721Deposits
-
-```solidity
-function erc721Deposits(address, address, uint256) external view returns (bool)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined
-| _1 | address | undefined
-| _2 | uint256 | undefined
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | bool | undefined
-
 ### finalizeERC20Withdrawal
 
 ```solidity
@@ -204,27 +139,6 @@ function finalizeERC20Withdrawal(address _l1Token, address _l2Token, address _fr
 | _from | address | L2 address initiating the transfer.
 | _to | address | L1 address to credit the withdrawal to.
 | _amount | uint256 | Amount of the ERC20 to deposit.
-| _data | bytes | Data provided by the sender on L2. This data is provided   solely as a convenience for external contracts. Aside from enforcing a maximum   length, these contracts provide no guarantees about its content.
-
-### finalizeERC721Withdrawal
-
-```solidity
-function finalizeERC721Withdrawal(address _l1Token, address _l2Token, address _from, address _to, uint256 _tokenId, bytes _data) external nonpayable
-```
-
-
-
-*Complete a withdrawal from L2 to L1, and send the ERC721 token to the recipient on L1 This call will fail if the initialized withdrawal from L2 has not been finalized.*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| _l1Token | address | Address of L1 token to finalizeWithdrawal for.
-| _l2Token | address | Address of L2 token where withdrawal was initiated.
-| _from | address | L2 address initiating the transfer.
-| _to | address | L1 address to credit the withdrawal to.
-| _tokenId | uint256 | Token ID of the ERC721 to deposit.
 | _data | bytes | Data provided by the sender on L2. This data is provided   solely as a convenience for external contracts. Aside from enforcing a maximum   length, these contracts provide no guarantees about its content.
 
 ### finalizeETHWithdrawal
@@ -297,31 +211,6 @@ function messenger() external view returns (address)
 |---|---|---|
 | _0 | address | undefined
 
-### onERC721Received
-
-```solidity
-function onERC721Received(address operator, address from, uint256 tokenId, bytes data) external pure returns (bytes4)
-```
-
-
-
-*Whenever an {IERC721} `tokenId` token is transferred to this contract via {IERC721-safeTransferFrom} by `operator` from `from`, this function is called. It must return its Solidity selector to confirm the token transfer. If any other value is returned or the interface is not implemented by the recipient, the transfer will be reverted. The selector can be obtained in Solidity with `IERC721.onERC721Received.selector`.*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| operator | address | undefined
-| from | address | undefined
-| tokenId | uint256 | undefined
-| data | bytes | undefined
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | bytes4 | undefined
-
 
 
 ## Events
@@ -366,48 +255,6 @@ event ERC20WithdrawalFinalized(address indexed _l1Token, address indexed _l2Toke
 | _from `indexed` | address | undefined |
 | _to  | address | undefined |
 | _amount  | uint256 | undefined |
-| _data  | bytes | undefined |
-
-### ERC721DepositInitiated
-
-```solidity
-event ERC721DepositInitiated(address indexed _l1Token, address indexed _l2Token, address indexed _from, address _to, uint256 _tokenId, bytes _data)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| _l1Token `indexed` | address | undefined |
-| _l2Token `indexed` | address | undefined |
-| _from `indexed` | address | undefined |
-| _to  | address | undefined |
-| _tokenId  | uint256 | undefined |
-| _data  | bytes | undefined |
-
-### ERC721WithdrawalFinalized
-
-```solidity
-event ERC721WithdrawalFinalized(address indexed _l1Token, address indexed _l2Token, address indexed _from, address _to, uint256 _tokenId, bytes _data)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| _l1Token `indexed` | address | undefined |
-| _l2Token `indexed` | address | undefined |
-| _from `indexed` | address | undefined |
-| _to  | address | undefined |
-| _tokenId  | uint256 | undefined |
 | _data  | bytes | undefined |
 
 ### ETHDepositInitiated

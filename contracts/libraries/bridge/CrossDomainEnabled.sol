@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >0.5.0 <0.9.0;
+import "hardhat/console.sol";
 
 /* Interface Imports */
 import { ICrossDomainMessenger } from "./ICrossDomainMessenger.sol";
