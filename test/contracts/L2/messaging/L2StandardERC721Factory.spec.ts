@@ -55,7 +55,7 @@ describe('L2StandardERC721Factory', () => {
       expect(await l2Token.name()).to.equal('L2ERC721')
       expect(await l2Token.symbol()).to.equal('ERC')
 
-      expect(await L2StandardERC721Factory.standardTokenAddresses(l2Token.address)).to.equal(L1ERC721.address)
+      expect(await L2StandardERC721Factory.isStandardERC721(l2Token.address)).to.equal(true)
     })
 
     it('should not be able to create a standard token with a 0 address for l1 token', async () => {

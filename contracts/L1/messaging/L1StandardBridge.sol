@@ -33,11 +33,13 @@ contract L1StandardBridge is IL1StandardBridge, IERC721Receiver, CrossDomainEnab
 
     address public l2TokenBridge;
 
-    // Maps L1 ERC20 token to L2 ERC20 token to balance of the L1 token deposited
-    mapping(address => mapping(address => uint256)) public erc20Deposits;
+    // Maps L1 ERC20 token to L2 ERC20 token to balance of the L1 token deposited.
+    // This variable is called "deposits" and not "erc20Deposits" for backwards
+    // compatibility with the old L1StandardBridge.
+    mapping(address => mapping(address => uint256)) public deposits;
 
     // Maps L1 ERC721 token to L2 ERC721 token to token ID to a boolean indicating
-    // if the token is deposited
+    // if the token is deposited at the L2 ERC721 token address
     mapping(address => mapping(address => mapping(uint256 => bool))) public erc721Deposits;
 
     /***************
@@ -119,9 +121,9 @@ contract L1StandardBridge is IL1StandardBridge, IERC721Receiver, CrossDomainEnab
         uint32 _l2Gas,
         bytes memory _data
     ) internal {
-        // Construct calldata for finalizeDeposit call
+        // Construct calldata for finalizeERC721Deposit call
         bytes memory message = abi.encodeWithSelector(
-            IL2ERC20Bridge.finalizeDeposit.selector,
+            IL2ERC20Bridge.finalizeERC721Deposit.selector,
             address(0),
             Lib_PredeployAddresses.OVM_ETH,
             _from,
@@ -194,9 +196,9 @@ contract L1StandardBridge is IL1StandardBridge, IERC721Receiver, CrossDomainEnab
         // slither-disable-next-line reentrancy-events, reentrancy-benign
         IERC20(_l1Token).safeTransferFrom(_from, address(this), _amount);
 
-        // Construct calldata for _l2Token.finalizeDeposit(_to, _amount)
+        // Construct calldata for _l2Token.finalizeERC721Deposit(_to, _amount)
         bytes memory message = abi.encodeWithSelector(
-            IL2ERC20Bridge.finalizeDeposit.selector,
+            IL2ERC20Bridge.finalizeERC721Deposit.selector,
             _l1Token,
             _l2Token,
             _from,
@@ -210,7 +212,7 @@ contract L1StandardBridge is IL1StandardBridge, IERC721Receiver, CrossDomainEnab
         sendCrossDomainMessage(l2TokenBridge, _l2Gas, message);
 
         // slither-disable-next-line reentrancy-benign
-        erc20Deposits[_l1Token][_l2Token] = erc20Deposits[_l1Token][_l2Token] + _amount;
+        deposits[_l1Token][_l2Token] = deposits[_l1Token][_l2Token] + _amount;
 
         // slither-disable-next-line reentrancy-events
         emit ERC20DepositInitiated(_l1Token, _l2Token, _from, _to, _amount, _data);
@@ -275,9 +277,9 @@ contract L1StandardBridge is IL1StandardBridge, IERC721Receiver, CrossDomainEnab
         // slither-disable-next-line reentrancy-events, reentrancy-benign
         IERC721(_l1Token).safeTransferFrom(_from, address(this), _tokenId);
 
-        // Construct calldata for _l2Token.finalizeDeposit(_to, _tokenId)
+        // Construct calldata for _l2Token.finalizeERC721Deposit(_to, _tokenId)
         bytes memory message = abi.encodeWithSelector(
-            IL2ERC721Bridge.finalizeDeposit.selector,
+            IL2ERC721Bridge.finalizeERC721Deposit.selector,
             _l1Token,
             _l2Token,
             _from,
@@ -329,7 +331,7 @@ contract L1StandardBridge is IL1StandardBridge, IERC721Receiver, CrossDomainEnab
         uint256 _amount,
         bytes calldata _data
     ) external onlyFromCrossDomainAccount(l2TokenBridge) {
-        erc20Deposits[_l1Token][_l2Token] = erc20Deposits[_l1Token][_l2Token] - _amount;
+        deposits[_l1Token][_l2Token] = deposits[_l1Token][_l2Token] - _amount;
 
         // When a withdrawal is finalized on L1, the L1 Bridge transfers the funds to the withdrawer
         // slither-disable-next-line reentrancy-events

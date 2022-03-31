@@ -9,7 +9,7 @@ interface IL2ERC721Bridge {
      * Events *
      **********/
 
-    event WithdrawalInitiated(
+    event ERC721WithdrawalInitiated(
         address indexed _l1Token,
         address indexed _l2Token,
         address indexed _from,
@@ -18,7 +18,7 @@ interface IL2ERC721Bridge {
         bytes _data
     );
 
-    event DepositFinalized(
+    event ERC721DepositFinalized(
         address indexed _l1Token,
         address indexed _l2Token,
         address indexed _from,
@@ -27,7 +27,7 @@ interface IL2ERC721Bridge {
         bytes _data
     );
 
-    event DepositFailed(
+    event ERC721DepositFailed(
         address indexed _l1Token,
         address indexed _l2Token,
         address indexed _from,
@@ -44,10 +44,10 @@ interface IL2ERC721Bridge {
      * @dev get the address of the corresponding L1 bridge contract.
      * @return Address of the corresponding L1 bridge contract.
      */
-    function l1ERC721Bridge() external returns (address);
+    function l1TokenBridge() external returns (address);
 
     /**
-     * @dev initiate a withdraw of an NFT to the caller's account on L1
+     * @dev initiate a withdrawal of an NFT to the caller's account on L1
      * @param _l2Token Address of L2 token where withdrawal was initiated.
      * @param _tokenId Token ID to withdraw.
      * @param _l1Gas Unused, but included for potential forward compatibility considerations.
@@ -55,7 +55,7 @@ interface IL2ERC721Bridge {
      *        solely as a convenience for external contracts. Aside from enforcing a maximum
      *        length, these contracts provide no guarantees about its content.
      */
-    function withdraw(
+    function withdrawERC721(
         address _l2Token,
         uint256 _tokenId,
         uint32 _l1Gas,
@@ -72,7 +72,7 @@ interface IL2ERC721Bridge {
      *        solely as a convenience for external contracts. Aside from enforcing a maximum
      *        length, these contracts provide no guarantees about its content.
      */
-    function withdrawTo(
+    function withdrawERC721To(
         address _l2Token,
         address _to,
         uint256 _tokenId,
@@ -97,7 +97,7 @@ interface IL2ERC721Bridge {
      *        solely as a convenience for external contracts. Aside from enforcing a maximum
      *        length, these contracts provide no guarantees about its content.
      */
-    function finalizeDeposit(
+    function finalizeERC721Deposit(
         address _l1Token,
         address _l2Token,
         address _from,

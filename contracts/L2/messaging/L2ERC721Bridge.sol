@@ -3,7 +3,6 @@ pragma solidity ^0.8.9;
 
 /* Interface Imports */
 import { IL1ERC721Bridge } from "../../L1/messaging/IL1ERC721Bridge.sol";
-import { IL1ERC721Bridge } from "../../L1/messaging/IL1ERC721Bridge.sol";
 import { IL2ERC721Bridge } from "./IL2ERC721Bridge.sol";
 
 /* Library Imports */
@@ -51,26 +50,26 @@ contract L2ERC721Bridge is IL2ERC721Bridge, CrossDomainEnabled {
     /**
      * @inheritdoc IL2ERC721Bridge
      */
-    function withdraw(
-        address _l2Token,
+    function withdrawERC721(
         uint256 _tokenId,
+        address _l2Token,
         uint32 _l1Gas,
         bytes calldata _data
     ) external virtual {
-        _initiateWithdrawal(_l2Token, msg.sender, msg.sender, _tokenId, _l1Gas, _data);
+        _initiateERC721Withdrawal(_l2Token, msg.sender, msg.sender, _tokenId, _l1Gas, _data);
     }
 
     /**
      * @inheritdoc IL2ERC721Bridge
      */
-    function withdrawTo(
+    function withdrawERC721To(
         address _l2Token,
         address _to,
         uint256 _tokenId,
         uint32 _l1Gas,
         bytes calldata _data
     ) external virtual {
-        _initiateWithdrawal(_l2Token, msg.sender, _to, _tokenId, _l1Gas, _data);
+        _initiateERC721Withdrawal(_l2Token, msg.sender, _to, _tokenId, _l1Gas, _data);
     }
 
     /**
@@ -85,7 +84,7 @@ contract L2ERC721Bridge is IL2ERC721Bridge, CrossDomainEnabled {
      *        solely as a convenience for external contracts. Aside from enforcing a maximum
      *        length, these contracts provide no guarantees about its content.
      */
-    function _initiateWithdrawal(
+    function _initiateERC721Withdrawal(
         address _l2Token,
         address _from,
         address _to,
@@ -98,7 +97,7 @@ contract L2ERC721Bridge is IL2ERC721Bridge, CrossDomainEnabled {
         // slither-disable-next-line reentrancy-events
         IL2StandardERC721(_l2Token).burn(msg.sender, _tokenId);
 
-        // Construct calldata for l1ERC721Bridge.finalizeERC721Withdrawal(_to, _tokenId)
+        // Construct calldata for l1TokenBridge.finalizeERC721Withdrawal(_to, _tokenId)
         // slither-disable-next-line reentrancy-events
         address l1Token = IL2StandardERC721(_l2Token).l1Token();
         bytes memory message = abi.encodeWithSelector(
@@ -113,10 +112,10 @@ contract L2ERC721Bridge is IL2ERC721Bridge, CrossDomainEnabled {
 
         // Send message to L1 bridge
         // slither-disable-next-line reentrancy-events
-        sendCrossDomainMessage(l1ERC721Bridge, _l1Gas, message);
+        sendCrossDomainMessage(l1TokenBridge, _l1Gas, message);
 
         // slither-disable-next-line reentrancy-events
-        emit WithdrawalInitiated(l1Token, _l2Token, msg.sender, _to, _tokenId, _data);
+        emit ERC721WithdrawalInitiated(l1Token, _l2Token, msg.sender, _to, _tokenId, _data);
     }
 
     /************************************
@@ -126,14 +125,14 @@ contract L2ERC721Bridge is IL2ERC721Bridge, CrossDomainEnabled {
     /**
      * @inheritdoc IL2ERC721Bridge
      */
-    function finalizeDeposit(
+    function finalizeERC721Deposit(
         address _l1Token,
         address _l2Token,
         address _from,
         address _to,
         uint256 _tokenId,
         bytes calldata _data
-    ) external virtual onlyFromCrossDomainAccount(l1ERC721Bridge) {
+    ) external virtual onlyFromCrossDomainAccount(l1TokenBridge) {
         // Check the target token is compliant and
         // verify the deposited token on L1 matches the L2 deposited token representation here
         if (
@@ -146,7 +145,7 @@ contract L2ERC721Bridge is IL2ERC721Bridge, CrossDomainEnabled {
             // slither-disable-next-line reentrancy-events
             IL2StandardERC721(_l2Token).mint(_to, _tokenId);
             // slither-disable-next-line reentrancy-events
-            emit DepositFinalized(_l1Token, _l2Token, _from, _to, _tokenId, _data);
+            emit ERC721DepositFinalized(_l1Token, _l2Token, _from, _to, _tokenId, _data);
         } else {
             // Either the L2 token which is being deposited-into disagrees about the correct address
             // of its L1 token, or does not support the correct interface.
@@ -168,9 +167,9 @@ contract L2ERC721Bridge is IL2ERC721Bridge, CrossDomainEnabled {
 
             // Send message up to L1 bridge
             // slither-disable-next-line reentrancy-events
-            sendCrossDomainMessage(l1ERC721Bridge, 0, message);
+            sendCrossDomainMessage(l1TokenBridge, 0, message);
             // slither-disable-next-line reentrancy-events
-            emit DepositFailed(_l1Token, _l2Token, _from, _to, _tokenId, _data);
+            emit ERC721DepositFailed(_l1Token, _l2Token, _from, _to, _tokenId, _data);
         }
     }
 }

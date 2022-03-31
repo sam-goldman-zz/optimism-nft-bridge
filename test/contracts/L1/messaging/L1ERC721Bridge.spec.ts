@@ -32,8 +32,8 @@ describe('L1ERC721Bridge', () => {
   let bob: Signer
   let bobsAddress
   let aliceAddress
-  let tokenId
-  let aliceInitialBalance
+  let TOKEN_ID
+  let ALICE_INITIAL_ERC721_BALANCE
 
   // we can just make up this string since it's on the "other" Layer
   let Factory__L1ERC721: MockContractFactory<ContractFactory> 
@@ -51,8 +51,8 @@ describe('L1ERC721Bridge', () => {
 
     aliceAddress = await alice.getAddress()
     bobsAddress = await bob.getAddress()
-    aliceInitialBalance = 5
-    tokenId = 10;
+    ALICE_INITIAL_ERC721_BALANCE = 5
+    TOKEN_ID = 10;
   })
 
   let L1ERC721: MockContract<Contract>
@@ -77,10 +77,10 @@ describe('L1ERC721Bridge', () => {
     L1ERC721 = await Factory__L1ERC721.deploy('L1ERC721', 'ERC')
 
     await L1ERC721.setVariable('_owners', {
-      [tokenId]: aliceAddress,
+      [TOKEN_ID]: aliceAddress,
     })
     await L1ERC721.setVariable('_balances', {
-      [aliceAddress]: aliceInitialBalance,
+      [aliceAddress]: ALICE_INITIAL_ERC721_BALANCE,
     })
   })
 
@@ -99,7 +99,7 @@ describe('L1ERC721Bridge', () => {
     beforeEach(async () => {
       await L1ERC721.connect(alice).approve(
         L1ERC721Bridge.address,
-        tokenId
+        TOKEN_ID
       )
     })
 
@@ -108,7 +108,7 @@ describe('L1ERC721Bridge', () => {
       await L1ERC721Bridge.connect(alice).depositERC721(
         L1ERC721.address,
         DUMMY_L2_ERC721_ADDRESS,
-        tokenId,
+        TOKEN_ID,
         FINALIZATION_GAS,
         NON_NULL_BYTES32
       )
@@ -118,7 +118,7 @@ describe('L1ERC721Bridge', () => {
 
       // alice's balance decreases by 1
       const depositerBalance = await L1ERC721.balanceOf(aliceAddress)
-      expect(depositerBalance).to.equal(aliceInitialBalance - 1)
+      expect(depositerBalance).to.equal(ALICE_INITIAL_ERC721_BALANCE - 1)
 
       // bridge's balance increases by 1
       const bridgeBalance = await L1ERC721.balanceOf(L1ERC721Bridge.address)
@@ -136,14 +136,14 @@ describe('L1ERC721Bridge', () => {
           DUMMY_L2_ERC721_ADDRESS,
           aliceAddress,
           aliceAddress,
-          tokenId,
+          TOKEN_ID,
           NON_NULL_BYTES32,
         ])
       )
       expect(depositCallToMessenger.args[2]).to.equal(FINALIZATION_GAS)
 
       // Updates the deposits mapping
-      expect(await L1ERC721Bridge.deposits(L1ERC721.address, DUMMY_L2_ERC721_ADDRESS, tokenId)).to.equal(true)
+      expect(await L1ERC721Bridge.deposits(L1ERC721.address, DUMMY_L2_ERC721_ADDRESS, TOKEN_ID)).to.equal(true)
     })
 
     it('depositERC721To() escrows the deposited NFT and sends the correct deposit message', async () => {
@@ -153,7 +153,7 @@ describe('L1ERC721Bridge', () => {
         L1ERC721.address,
         DUMMY_L2_ERC721_ADDRESS,
         bobsAddress,
-        tokenId,
+        TOKEN_ID,
         FINALIZATION_GAS,
         NON_NULL_BYTES32
       )
@@ -162,15 +162,15 @@ describe('L1ERC721Bridge', () => {
 
       // alice's balance decreases by 1
       const depositerBalance = await L1ERC721.balanceOf(aliceAddress)
-      expect(depositerBalance).to.equal(aliceInitialBalance - 1)
+      expect(depositerBalance).to.equal(ALICE_INITIAL_ERC721_BALANCE - 1)
 
       // bridge's balance is increased
       const bridgeBalance = await L1ERC721.balanceOf(L1ERC721Bridge.address)
       expect(bridgeBalance).to.equal(1)
 
-      // bridge is owner of tokenId
-      const tokenIdOwner = await L1ERC721.ownerOf(tokenId);
-      expect(tokenIdOwner).to.equal(L1ERC721Bridge.address)
+      // bridge is owner of TOKEN_ID
+      const TOKEN_IDOwner = await L1ERC721.ownerOf(TOKEN_ID);
+      expect(TOKEN_IDOwner).to.equal(L1ERC721Bridge.address)
 
       // Check the correct cross-chain call was sent:
       // Message should be sent to the L2DepositedERC721 on L2
@@ -184,14 +184,14 @@ describe('L1ERC721Bridge', () => {
           DUMMY_L2_ERC721_ADDRESS,
           aliceAddress,
           bobsAddress,
-          tokenId,
+          TOKEN_ID,
           NON_NULL_BYTES32,
         ])
       )
       expect(depositCallToMessenger.args[2]).to.equal(FINALIZATION_GAS)
 
       // Updates the deposits mapping
-      expect(await L1ERC721Bridge.deposits(L1ERC721.address, DUMMY_L2_ERC721_ADDRESS, tokenId)).to.equal(true)
+      expect(await L1ERC721Bridge.deposits(L1ERC721.address, DUMMY_L2_ERC721_ADDRESS, TOKEN_ID)).to.equal(true)
     })
 
     it('cannot depositERC721 from a contract account', async () => {
@@ -199,7 +199,7 @@ describe('L1ERC721Bridge', () => {
         L1ERC721Bridge.depositERC721(
           L1ERC721.address,
           DUMMY_L2_ERC721_ADDRESS,
-          tokenId,
+          TOKEN_ID,
           FINALIZATION_GAS,
           NON_NULL_BYTES32
         )
@@ -213,7 +213,7 @@ describe('L1ERC721Bridge', () => {
             L1ERC721.address,
             DUMMY_L2_ERC721_ADDRESS,
             bobsAddress,
-            tokenId,
+            TOKEN_ID,
             FINALIZATION_GAS,
             NON_NULL_BYTES32
           )
@@ -226,7 +226,7 @@ describe('L1ERC721Bridge', () => {
             L1ERC721.address,
             DUMMY_L2_ERC721_ADDRESS,
             bobsAddress,
-            tokenId,
+            TOKEN_ID,
             FINALIZATION_GAS,
             NON_NULL_BYTES32
           )
@@ -239,7 +239,7 @@ describe('L1ERC721Bridge', () => {
             constants.AddressZero,
             DUMMY_L2_ERC721_ADDRESS,
             bobsAddress,
-            tokenId,
+            TOKEN_ID,
             FINALIZATION_GAS,
             NON_NULL_BYTES32
           )
@@ -252,7 +252,7 @@ describe('L1ERC721Bridge', () => {
             bobsAddress,
             DUMMY_L2_ERC721_ADDRESS,
             bobsAddress,
-            tokenId,
+            TOKEN_ID,
             FINALIZATION_GAS,
             NON_NULL_BYTES32
           )
@@ -266,7 +266,7 @@ describe('L1ERC721Bridge', () => {
       expect(await L1ERC721Bridge.onERC721Received(
         L1ERC721Bridge.address,
         aliceAddress,
-        tokenId,
+        TOKEN_ID,
         NON_NULL_BYTES32
       )).to.equal(selector)
     })
@@ -280,7 +280,7 @@ describe('L1ERC721Bridge', () => {
           DUMMY_L2_ERC721_ADDRESS,
           constants.AddressZero,
           constants.AddressZero,
-          tokenId,
+          TOKEN_ID,
           NON_NULL_BYTES32
         )
       ).to.be.revertedWith(ERR_INVALID_MESSENGER)
@@ -293,7 +293,7 @@ describe('L1ERC721Bridge', () => {
           DUMMY_L2_ERC721_ADDRESS,
           constants.AddressZero,
           constants.AddressZero,
-          tokenId,
+          TOKEN_ID,
           NON_NULL_BYTES32,
           {
             from: Fake__L1CrossDomainMessenger.address,
@@ -306,19 +306,19 @@ describe('L1ERC721Bridge', () => {
       // First Alice will send an NFT so that there's a balance to be withdrawn
       await L1ERC721.connect(alice).approve(
         L1ERC721Bridge.address,
-        tokenId
+        TOKEN_ID
       )
 
       await L1ERC721Bridge.connect(alice).depositERC721(
         L1ERC721.address,
         DUMMY_L2_ERC721_ADDRESS,
-        tokenId,
+        TOKEN_ID,
         FINALIZATION_GAS,
         NON_NULL_BYTES32
       )
 
       // make sure bridge owns NFT
-      expect(await L1ERC721.ownerOf(tokenId)).to.equal(L1ERC721Bridge.address)
+      expect(await L1ERC721.ownerOf(TOKEN_ID)).to.equal(L1ERC721Bridge.address)
 
       Fake__L1CrossDomainMessenger.xDomainMessageSender.returns(
         () => DUMMY_L2_BRIDGE_ADDRESS
@@ -329,17 +329,17 @@ describe('L1ERC721Bridge', () => {
         DUMMY_L2_ERC721_ADDRESS,
         NON_ZERO_ADDRESS,
         NON_ZERO_ADDRESS,
-        tokenId,
+        TOKEN_ID,
         NON_NULL_BYTES32,
         { from: Fake__L1CrossDomainMessenger.address }
       )
 
       // NFT is transferred to new owner
-      expect(await L1ERC721.ownerOf(tokenId)).to.equal(NON_ZERO_ADDRESS)
+      expect(await L1ERC721.ownerOf(TOKEN_ID)).to.equal(NON_ZERO_ADDRESS)
 
       // deposits state variable is updated
       expect(
-        await L1ERC721Bridge.deposits(L1ERC721.address, DUMMY_L2_ERC721_ADDRESS, tokenId)
+        await L1ERC721Bridge.deposits(L1ERC721.address, DUMMY_L2_ERC721_ADDRESS, TOKEN_ID)
       ).to.equal(false)
     })
   })
