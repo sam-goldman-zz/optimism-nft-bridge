@@ -15,13 +15,13 @@ const DUMMY_L1BRIDGE_ADDRESS: string =
 const DUMMY_L1TOKEN_ADDRESS: string =
   '0x2234223412342234223422342234223422342234'
 
-describe('L2ERC721Bridge', () => {
+describe('L2StandardBridge', () => {
   let alice: Signer
   let aliceAddress: string
   let bob: Signer
   let bobsAddress: string
   let l2MessengerImpersonator: Signer
-  let Factory__L1ERC721Bridge: ContractFactory
+  let Factory__L1StandardBridge: ContractFactory
   const ALICE_INITIAL_BALANCE = 10
   const TOKEN_ID = 10
   before(async () => {
@@ -29,12 +29,12 @@ describe('L2ERC721Bridge', () => {
     ;[alice, bob, l2MessengerImpersonator] = await ethers.getSigners()
     aliceAddress = await alice.getAddress()
     bobsAddress = await bob.getAddress()
-    Factory__L1ERC721Bridge = await ethers.getContractFactory(
-      'L1ERC721Bridge'
+    Factory__L1StandardBridge = await ethers.getContractFactory(
+      'L1StandardBridge'
     )
   })
 
-  let L2ERC721Bridge: Contract
+  let L2StandardBridge: Contract
   let L2ERC721: Contract
   let Fake__L2CrossDomainMessenger: FakeContract
   beforeEach(async () => {
@@ -46,21 +46,21 @@ describe('L2ERC721Bridge', () => {
     )
 
     // Deploy the contract under test
-    L2ERC721Bridge = await (
-      await ethers.getContractFactory('L2ERC721Bridge')
+    L2StandardBridge = await (
+      await ethers.getContractFactory('L2StandardBridge')
     ).deploy(Fake__L2CrossDomainMessenger.address, DUMMY_L1BRIDGE_ADDRESS)
 
     // Deploy an L2 ERC721
     L2ERC721 = await (
       await ethers.getContractFactory('L2StandardERC721', alice)
-    ).deploy(L2ERC721Bridge.address, DUMMY_L1TOKEN_ADDRESS, 'L2Token', 'L2T')
+    ).deploy(L2StandardBridge.address, DUMMY_L1TOKEN_ADDRESS, 'L2Token', 'L2T')
   })
 
   // test the transfer flow of moving a token from L1 to L2
-  describe('finalizeDeposit', () => {
+  describe('finalizeERC721Deposit', () => {
     it('onlyFromCrossDomainAccount: should revert on calls from a non-crossDomainMessenger L2 account', async () => {
       await expect(
-        L2ERC721Bridge.finalizeDeposit(
+        L2StandardBridge.finalizeERC721Deposit(
           DUMMY_L1TOKEN_ADDRESS,
           NON_ZERO_ADDRESS,
           NON_ZERO_ADDRESS,
@@ -71,13 +71,13 @@ describe('L2ERC721Bridge', () => {
       ).to.be.revertedWith(ERR_INVALID_MESSENGER)
     })
 
-    it('onlyFromCrossDomainAccount: should revert on calls from the right crossDomainMessenger, but wrong xDomainMessageSender (ie. not the L1ERC721Bridge)', async () => {
+    it('onlyFromCrossDomainAccount: should revert on calls from the right crossDomainMessenger, but wrong xDomainMessageSender (ie. not the L1StandardBridge)', async () => {
       Fake__L2CrossDomainMessenger.xDomainMessageSender.returns(
         NON_ZERO_ADDRESS
       )
 
       await expect(
-        L2ERC721Bridge.connect(l2MessengerImpersonator).finalizeDeposit(
+        L2StandardBridge.connect(l2MessengerImpersonator).finalizeERC721Deposit(
           DUMMY_L1TOKEN_ADDRESS,
           NON_ZERO_ADDRESS,
           NON_ZERO_ADDRESS,
@@ -103,7 +103,7 @@ describe('L2ERC721Bridge', () => {
         () => DUMMY_L1BRIDGE_ADDRESS
       )
 
-      await L2ERC721Bridge.connect(l2MessengerImpersonator).finalizeDeposit(
+      await L2StandardBridge.connect(l2MessengerImpersonator).finalizeERC721Deposit(
         DUMMY_L1TOKEN_ADDRESS,
         NonCompliantERC721.address,
         aliceAddress,
@@ -120,7 +120,7 @@ describe('L2ERC721Bridge', () => {
 
       expect(withdrawalCallToMessenger.args[0]).to.equal(DUMMY_L1BRIDGE_ADDRESS)
       expect(withdrawalCallToMessenger.args[1]).to.equal(
-        Factory__L1ERC721Bridge.interface.encodeFunctionData(
+        Factory__L1StandardBridge.interface.encodeFunctionData(
           'finalizeERC721Withdrawal',
           [
             DUMMY_L1TOKEN_ADDRESS,
@@ -140,7 +140,7 @@ describe('L2ERC721Bridge', () => {
         () => DUMMY_L1BRIDGE_ADDRESS
       )
 
-      await L2ERC721Bridge.connect(l2MessengerImpersonator).finalizeDeposit(
+      await L2StandardBridge.connect(l2MessengerImpersonator).finalizeERC721Deposit(
         DUMMY_L1TOKEN_ADDRESS,
         L2ERC721.address,
         aliceAddress,
@@ -164,7 +164,7 @@ describe('L2ERC721Bridge', () => {
       Mock__L2Token = await (
         await smock.mock('L2StandardERC721')
       ).deploy(
-        L2ERC721Bridge.address,
+        L2StandardBridge.address,
         DUMMY_L1TOKEN_ADDRESS,
         'L2Token',
         'L2T'
@@ -178,11 +178,11 @@ describe('L2ERC721Bridge', () => {
       })
     })
 
-    it('withdraw() burns and sends the correct withdrawal message', async () => {
+    it('withdrawERC721() burns and sends the correct withdrawal message', async () => {
       const uri = await Mock__L2Token.tokenURI(TOKEN_ID)
       console.log(uri)
 
-      await L2ERC721Bridge.withdraw(
+      await L2StandardBridge.withdrawERC721(
         Mock__L2Token.address,
         TOKEN_ID,
         0,
@@ -202,11 +202,11 @@ describe('L2ERC721Bridge', () => {
       ).to.be.revertedWith("ERC721: owner query for nonexistent token")
 
       // Assert the correct cross-chain call was sent:
-      // Message should be sent to the L1ERC721Bridge on L1
+      // Message should be sent to the L1StandardBridge on L1
       expect(withdrawalCallToMessenger.args[0]).to.equal(DUMMY_L1BRIDGE_ADDRESS)
-      // Message data should be a call telling the L1ERC721Bridge to finalize the withdrawal
+      // Message data should be a call telling the L1StandardBridge to finalize the withdrawal
       expect(withdrawalCallToMessenger.args[1]).to.equal(
-        Factory__L1ERC721Bridge.interface.encodeFunctionData(
+        Factory__L1StandardBridge.interface.encodeFunctionData(
           'finalizeERC721Withdrawal',
           [
             DUMMY_L1TOKEN_ADDRESS,
@@ -222,8 +222,8 @@ describe('L2ERC721Bridge', () => {
       expect(withdrawalCallToMessenger.args[2]).to.equal(0)
     })
 
-    it('withdrawTo() burns and sends the correct withdrawal message', async () => {
-      await L2ERC721Bridge.withdrawTo(
+    it('withdrawERC721To() burns and sends the correct withdrawal message', async () => {
+      await L2StandardBridge.withdrawERC721To(
         Mock__L2Token.address,
         bobsAddress,
         TOKEN_ID,
@@ -243,11 +243,11 @@ describe('L2ERC721Bridge', () => {
       ).to.be.revertedWith("ERC721: owner query for nonexistent token")
 
       // Assert the correct cross-chain call was sent.
-      // Message should be sent to the L1ERC721Bridge on L1
+      // Message should be sent to the L1StandardBridge on L1
       expect(withdrawalCallToMessenger.args[0]).to.equal(DUMMY_L1BRIDGE_ADDRESS)
-      // The message data should be a call telling the L1ERC721Bridge to finalize the withdrawal
+      // The message data should be a call telling the L1StandardBridge to finalize the withdrawal
       expect(withdrawalCallToMessenger.args[1]).to.equal(
-        Factory__L1ERC721Bridge.interface.encodeFunctionData(
+        Factory__L1StandardBridge.interface.encodeFunctionData(
           'finalizeERC721Withdrawal',
           [
             DUMMY_L1TOKEN_ADDRESS,

@@ -297,7 +297,44 @@ contract L2StandardBridge is IL2ERC20Bridge, IL2ERC721Bridge, CrossDomainEnabled
         uint256 _amount,
         bytes calldata _data
     ) external virtual onlyFromCrossDomainAccount(l1TokenBridge) {
-        this.finalizeERC20Deposit(_l1Token, _l2Token, _from, _to, _amount, _data);
+        // Check the target token is compliant and
+        // verify the deposited token on L1 matches the L2 deposited token representation here
+        if (
+            // slither-disable-next-line reentrancy-events
+            ERC165Checker.supportsInterface(_l2Token, 0x1d1d8b63) &&
+            _l1Token == IL2StandardERC20(_l2Token).l1Token()
+        ) {
+            // When a deposit is finalized, we credit the account on L2 with the same amount of
+            // tokens.
+            // slither-disable-next-line reentrancy-events
+            IL2StandardERC20(_l2Token).mint(_to, _amount);
+            // slither-disable-next-line reentrancy-events
+            emit ERC20DepositFinalized(_l1Token, _l2Token, _from, _to, _amount, _data);
+        } else {
+            // Either the L2 token which is being deposited-into disagrees about the correct address
+            // of its L1 token, or does not support the correct interface.
+            // This should only happen if there is a  malicious L2 token, or if a user somehow
+            // specified the wrong L2 token address to deposit into.
+            // In either case, we stop the process here and construct a withdrawal
+            // message so that users can get their funds out in some cases.
+            // There is no way to prevent malicious token contracts altogether, but this does limit
+            // user error and mitigate some forms of malicious contract behavior.
+            bytes memory message = abi.encodeWithSelector(
+                IL1ERC20Bridge.finalizeERC20Withdrawal.selector,
+                _l1Token,
+                _l2Token,
+                _to, // switched the _to and _from here to bounce back the deposit to the sender
+                _from,
+                _amount,
+                _data
+            );
+
+            // Send message up to L1 bridge
+            // slither-disable-next-line reentrancy-events
+            sendCrossDomainMessage(l1TokenBridge, 0, message);
+            // slither-disable-next-line reentrancy-events
+            emit ERC20DepositFailed(_l1Token, _l2Token, _from, _to, _amount, _data);
+        }
     }
 
     /**
