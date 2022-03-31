@@ -18,7 +18,4 @@ library Lib_PredeployAddresses {
     address internal constant L2_STANDARD_TOKEN_FACTORY =
         0x4200000000000000000000000000000000000012;
     address internal constant L1_BLOCK_NUMBER = 0x4200000000000000000000000000000000000013;
-    
-    // Placeholder
-    address internal constant L2_ERC721_BRIDGE = 0x4200000000000000000000000000000000000043;
 }

@@ -25,9 +25,6 @@ const DUMMY_L2_BRIDGE_ADDRESS = ethers.utils.getAddress(
 
 const INITIAL_TOTAL_L1_SUPPLY = 5000
 const FINALIZATION_GAS = 1_200_000
-const ALICE_INITIAL_ERC721_BALANCE = 5;
-const TOKEN_ID = 10
-
 
 describe('L1StandardBridge', () => {
   // init signers
@@ -36,14 +33,10 @@ describe('L1StandardBridge', () => {
   let bob: Signer
   let bobsAddress
   let aliceAddress
-  let tokenId
-  let aliceInitialBalance
 
   // we can just make up this string since it's on the "other" Layer
   let Factory__L1ERC20: MockContractFactory<ContractFactory>
-  let Factory__L1ERC721: MockContractFactory<ContractFactory> 
   let IL2ERC20Bridge: Interface
-  let IL2ERC721Bridge: Interface
   before(async () => {
     ;[l1MessengerImpersonator, alice, bob] = await ethers.getSigners()
 
@@ -54,23 +47,14 @@ describe('L1StandardBridge', () => {
       '@openzeppelin/contracts/token/ERC20/ERC20.sol:ERC20'
     )
 
-    // deploy an ERC721 contract on L1
-    Factory__L1ERC721 = await smock.mock(
-      '@openzeppelin/contracts/token/ERC721/ERC721.sol:ERC721'
-    )
-
-    // get an L2ERC20Bridge Interface
+    // get an L2ER20Bridge Interface
     IL2ERC20Bridge = getContractInterface('IL2ERC20Bridge')
-
-    // get an L2ERC721Bridge Interface
-    IL2ERC721Bridge = getContractInterface('IL2ERC721Bridge')
 
     aliceAddress = await alice.getAddress()
     bobsAddress = await bob.getAddress()
   })
 
   let L1ERC20: MockContract<Contract>
-  let L1ERC721: MockContract<Contract>
   let L1StandardBridge: Contract
   let Fake__L1CrossDomainMessenger: FakeContract
   beforeEach(async () => {
@@ -90,7 +74,6 @@ describe('L1StandardBridge', () => {
     )
 
     L1ERC20 = await Factory__L1ERC20.deploy('L1ERC20', 'ERC')
-    L1ERC721 = await Factory__L1ERC721.deploy('L1ERC721', 'ERC')
 
     await L1ERC20.setVariable('_totalSupply', INITIAL_TOTAL_L1_SUPPLY)
     await L1ERC20.setVariable('_balances', {
@@ -98,7 +81,7 @@ describe('L1StandardBridge', () => {
     })
   })
 
-  describe.only('initialize', () => {
+  describe('initialize', () => {
     it('Should only be callable once', async () => {
       await expect(
         L1StandardBridge.initialize(
@@ -423,7 +406,7 @@ describe('L1StandardBridge', () => {
     })
 
     it('cannot depositERC20 from a contract account', async () => {
-      await expect(
+      expect(
         L1StandardBridge.depositERC20(
           L1ERC20.address,
           DUMMY_L2_ERC20_ADDRESS,

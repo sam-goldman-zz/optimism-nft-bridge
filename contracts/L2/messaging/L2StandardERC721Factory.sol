@@ -33,7 +33,7 @@ contract L2StandardERC721Factory {
         require(_l1Token != address(0), "Must provide L1 token address");
 
         L2StandardERC721 l2Token = new L2StandardERC721(
-            Lib_PredeployAddresses.L2_ERC721_BRIDGE,
+            Lib_PredeployAddresses.L2_STANDARD_BRIDGE,
             _l1Token,
             _name,
             _symbol
