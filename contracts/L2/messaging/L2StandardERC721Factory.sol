@@ -13,6 +13,10 @@ import { Lib_PredeployAddresses } from "../../libraries/constants/Lib_PredeployA
 contract L2StandardERC721Factory  {
     event StandardL2ERC721Created(address indexed _l1Token, address indexed _l2Token);
 
+    // Maps an L2 ERC721 token address to a boolean that returns true if the token was created
+    // with the L2StandardERC721Factory.
+    mapping(address => bool) public isStandardERC721;
+
     /**
      * @dev Creates an instance of the standard ERC721 token on L2.
      * @param _l1Token Address of the corresponding L1 token.
@@ -33,6 +37,7 @@ contract L2StandardERC721Factory  {
             _symbol
         );
 
+        isStandardERC721[address(l2Token)] = true;
         emit StandardL2ERC721Created(_l1Token, address(l2Token));
     }
 }

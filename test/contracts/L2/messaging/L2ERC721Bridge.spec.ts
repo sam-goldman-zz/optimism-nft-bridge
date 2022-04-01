@@ -24,6 +24,7 @@ describe('L2ERC721Bridge', () => {
   let Factory__L1ERC721Bridge: ContractFactory
   const ALICE_INITIAL_BALANCE = 10
   const TOKEN_ID = 10
+
   before(async () => {
     // Create a special signer which will enable us to send messages from the L2Messenger contract
     ;[alice, bob, l2MessengerImpersonator] = await ethers.getSigners()
@@ -41,7 +42,7 @@ describe('L2ERC721Bridge', () => {
     // Get a new fake L2 messenger
     Fake__L2CrossDomainMessenger = await smock.fake<Contract>(
       await ethers.getContractFactory('L2CrossDomainMessenger'),
-      // This allows us to use an ethers override {from: Mock__L2CrossDomainMessenger.address} to mock calls
+      // This allows us to use an ethers override {from: Fake__L2CrossDomainMessenger.address} to mock calls
       { address: await l2MessengerImpersonator.getAddress() }
     )
 
@@ -179,9 +180,6 @@ describe('L2ERC721Bridge', () => {
     })
 
     it('withdraw() burns and sends the correct withdrawal message', async () => {
-      const uri = await Mock__L2Token.tokenURI(TOKEN_ID)
-      console.log(uri)
-
       await L2ERC721Bridge.withdraw(
         Mock__L2Token.address,
         TOKEN_ID,
@@ -266,10 +264,10 @@ describe('L2ERC721Bridge', () => {
 
   describe('standard ERC721', () => {
     it('should not allow anyone but the L2 bridge to mint and burn', async () => {
-      expect(L2ERC721.connect(alice).mint(aliceAddress, 100)).to.be.revertedWith(
+      await expect(L2ERC721.connect(alice).mint(aliceAddress, 100)).to.be.revertedWith(
         'Only L2 Bridge can mint and burn'
       )
-      expect(L2ERC721.connect(alice).burn(aliceAddress, 100)).to.be.revertedWith(
+      await expect(L2ERC721.connect(alice).burn(aliceAddress, 100)).to.be.revertedWith(
         'Only L2 Bridge can mint and burn'
       )
     })
@@ -278,10 +276,11 @@ describe('L2ERC721Bridge', () => {
       const supportsERC165 = await L2ERC721.supportsInterface(0x01ffc9a7)
       expect(supportsERC165).to.be.true
 
-      const supportsL2TokenInterface = await L2ERC721.supportsInterface(
-        0x1d1d8b63
-      )
+      const supportsL2TokenInterface = await L2ERC721.supportsInterface(0x1d1d8b63)
       expect(supportsL2TokenInterface).to.be.true
+
+      const supportsERC721Interface = await L2ERC721.supportsInterface(0x80ac58cd)
+      expect(supportsERC721Interface).to.be.true
 
       const badSupports = await L2ERC721.supportsInterface(0xffffffff)
       expect(badSupports).to.be.false

@@ -18,6 +18,7 @@ describe('L2StandardERC721Factory', () => {
   let L2StandardERC721Factory: Contract
   before(async () => {
     [signer] = await ethers.getSigners();
+
     // deploy an ERC721 contract on L1
     Factory__L1ERC721 = await smock.mock(
       '@openzeppelin/contracts/token/ERC721/ERC721.sol:ERC721'
@@ -37,7 +38,10 @@ describe('L2StandardERC721Factory', () => {
         'ERC'
       )
       const receipt = await tx.wait()
-      const [erc721CreatedEvent] = receipt.events
+
+      // The first element in the events array is a RoleGranted event emitted by AccessControl,
+      // so we query the second element to find the StandardL2ERC721Created event.
+      const erc721CreatedEvent = receipt.events[1]
 
       // Expect there to be an event emmited for the standard token creation
       expect(erc721CreatedEvent.event).to.be.eq('StandardL2ERC721Created')
@@ -54,6 +58,8 @@ describe('L2StandardERC721Factory', () => {
       expect(await l2Token.l1Token()).to.equal(L1ERC721.address)
       expect(await l2Token.name()).to.equal('L2ERC721')
       expect(await l2Token.symbol()).to.equal('ERC')
+
+      expect(await L2StandardERC721Factory.isStandardERC721(l2Token.address)).to.equal(true)
     })
 
     it('should not be able to create a standard token with a 0 address for l1 token', async () => {

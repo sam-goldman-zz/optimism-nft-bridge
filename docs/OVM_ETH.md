@@ -290,7 +290,7 @@ function transfer(address recipient, uint256 amount) external nonpayable returns
 
 
 
-*Moves `amount` tokens from the caller&#39;s account to `recipient`. Returns a boolean value indicating whether the operation succeeded. Emits a {Transfer} event.*
+
 
 #### Parameters
 
@@ -313,7 +313,7 @@ function transferFrom(address sender, address recipient, uint256 amount) externa
 
 
 
-*Moves `amount` tokens from `sender` to `recipient` using the allowance mechanism. `amount` is then deducted from the caller&#39;s allowance. Returns a boolean value indicating whether the operation succeeded. Emits a {Transfer} event.*
+
 
 #### Parameters
 

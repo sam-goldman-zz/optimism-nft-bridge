@@ -1,17 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
+import { ERC721 } from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import { ERC721URIStorage } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
 import { Lib_PredeployAddresses } from "../libraries/constants/Lib_PredeployAddresses.sol";
 import "./IL2StandardERC721.sol";
 
-contract L2StandardERC721 is IL2StandardERC721, ERC721URIStorage, AccessControl {
+contract L2StandardERC721 is AccessControl, IL2StandardERC721, ERC721URIStorage {
     address public l1Token;
     address public l2Bridge;
 
-    string public baseURI;
+    string public baseTokenURI;
 
     /**
      * @param _l2Bridge Address of the L2 standard bridge.
@@ -28,9 +29,9 @@ contract L2StandardERC721 is IL2StandardERC721, ERC721URIStorage, AccessControl 
         l1Token = _l1Token;
         l2Bridge = _l2Bridge;
 
-        // TODO
+        // Grants TOKENURI_ADMIN permission to modify the baseURI and tokenURIs.
         // We use OpenZeppelin's AccessControl instead of Ownable to prevent confusion on
-        // front-ends that query the 'owner' method of Ownable. 
+        // front-ends that query the 'owner' method of Ownable.
         _grantRole(DEFAULT_ADMIN_ROLE, Lib_PredeployAddresses.TOKENURI_ADMIN);
     }
 
@@ -40,12 +41,15 @@ contract L2StandardERC721 is IL2StandardERC721, ERC721URIStorage, AccessControl 
     }
 
     // slither-disable-next-line external-function
-    function supportsInterface(bytes4 _interfaceId) public pure override(ERC721, IERC165) returns (bool) {
+    function supportsInterface(bytes4 _interfaceId) public view override(ERC721, AccessControl, IERC165) returns (bool) {
         bytes4 firstSupportedInterface = bytes4(keccak256("supportsInterface(bytes4)")); // ERC165
         bytes4 secondSupportedInterface = IL2StandardERC721.l1Token.selector ^
             IL2StandardERC721.mint.selector ^
             IL2StandardERC721.burn.selector;
-        return _interfaceId == firstSupportedInterface || _interfaceId == secondSupportedInterface;
+        return
+            _interfaceId == firstSupportedInterface ||
+            _interfaceId == secondSupportedInterface ||
+            super.supportsInterface(_interfaceId);
     }
 
     // slither-disable-next-line external-function
@@ -57,7 +61,6 @@ contract L2StandardERC721 is IL2StandardERC721, ERC721URIStorage, AccessControl 
 
     // slither-disable-next-line external-function
     function burn(address _from, uint256 _tokenId) public virtual onlyL2Bridge {
-        _setTokenURI(_tokenId, "");
         _burn(_tokenId);
 
         emit Burn(_from, _tokenId);
@@ -69,11 +72,11 @@ contract L2StandardERC721 is IL2StandardERC721, ERC721URIStorage, AccessControl 
     }
 
     // slither-disable-next-line external-function
-    function setBaseURI(string memory _baseURI) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        baseURI = _baseURI;
+    function setBaseURI(string memory _baseTokenURI) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        baseTokenURI = _baseTokenURI;
     }
 
     function _baseURI() internal view virtual override returns (string memory) {
-        return baseURI;
+        return baseTokenURI;
     }
 }
