@@ -114,7 +114,8 @@ describe('L2StandardERC721', () => {
       await expect(
         L2StandardERC721.connect(alice).setTokenURI(TOKEN_ID, newTokenURI)
       ).to.be.revertedWith(
-        `AccessControl: account ${aliceAddress.toLowerCase()} is missing role ${DEFAULT_ADMIN_ROLE}`)
+        `AccessControl: account ${aliceAddress.toLowerCase()} is missing role ${DEFAULT_ADMIN_ROLE}`
+      )
     })
   })
 
@@ -138,5 +139,19 @@ describe('L2StandardERC721', () => {
         `AccessControl: account ${aliceAddress.toLowerCase()} is missing role ${DEFAULT_ADMIN_ROLE}`
       )
     })
-  }) 
+  })
+
+  describe('access control', () => {
+    it("revokeRole() can revoke token uri admin's privileges", async () => {
+      // revokes admin privileges
+      await L2StandardERC721.connect(tokenURIAdmin).revokeRole(DEFAULT_ADMIN_ROLE, tokenURIAdminAddress)
+
+      // token uri admin can't change token uri's anymore
+      await expect(
+        L2StandardERC721.connect(tokenURIAdmin).setBaseURI(BASE_URI)
+      ).to.be.revertedWith(
+        `AccessControl: account ${tokenURIAdminAddress.toLowerCase()} is missing role ${DEFAULT_ADMIN_ROLE}`
+      )
+    })
+  })
 })
