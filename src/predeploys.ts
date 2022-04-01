@@ -19,10 +19,8 @@ export const predeploys = {
   L2StandardTokenFactory: '0x4200000000000000000000000000000000000012',
   OVM_L1BlockNumber: '0x4200000000000000000000000000000000000013',
 
-  // Placeholders (these addresses are just for demonstration purposes):
+  // Placeholder (this address is just for demonstration purposes):
   L2ERC721Bridge: '0x4200000000000000000000000000000000000043',
-  // This is the address of the first account returned by ethers.getSigners on the local network
-  TokenURIAdmin: '0x17ec8597ff92C3F44523bDc65BF0f1bE632917ff',
 
   // We're temporarily disabling OVM_ETH because the jury is still out on whether or not ETH as an
   // ERC20 is desirable.

@@ -261,29 +261,4 @@ describe('L2ERC721Bridge', () => {
       expect(withdrawalCallToMessenger.args[2]).to.equal(0)
     })
   })
-
-  describe('standard ERC721', () => {
-    it('should not allow anyone but the L2 bridge to mint and burn', async () => {
-      await expect(L2ERC721.connect(alice).mint(aliceAddress, 100)).to.be.revertedWith(
-        'Only L2 Bridge can mint and burn'
-      )
-      await expect(L2ERC721.connect(alice).burn(aliceAddress, 100)).to.be.revertedWith(
-        'Only L2 Bridge can mint and burn'
-      )
-    })
-
-    it('should return the correct interface support', async () => {
-      const supportsERC165 = await L2ERC721.supportsInterface(0x01ffc9a7)
-      expect(supportsERC165).to.be.true
-
-      const supportsL2TokenInterface = await L2ERC721.supportsInterface(0x1d1d8b63)
-      expect(supportsL2TokenInterface).to.be.true
-
-      const supportsERC721Interface = await L2ERC721.supportsInterface(0x80ac58cd)
-      expect(supportsERC721Interface).to.be.true
-
-      const badSupports = await L2ERC721.supportsInterface(0xffffffff)
-      expect(badSupports).to.be.false
-    })
-  })
 })
