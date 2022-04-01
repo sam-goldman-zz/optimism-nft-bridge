@@ -1,13 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-import { ERC721 } from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import { ERC721URIStorage } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
+import { Lib_PredeployAddresses } from "../libraries/constants/Lib_PredeployAddresses.sol";
 import "./IL2StandardERC721.sol";
 
-contract L2StandardERC721 is IL2StandardERC721, ERC721 {
+contract L2StandardERC721 is IL2StandardERC721, ERC721URIStorage, AccessControl {
     address public l1Token;
     address public l2Bridge;
+
+    string public baseURI;
 
     /**
      * @param _l2Bridge Address of the L2 standard bridge.
@@ -23,6 +27,11 @@ contract L2StandardERC721 is IL2StandardERC721, ERC721 {
     ) ERC721(_name, _symbol) {
         l1Token = _l1Token;
         l2Bridge = _l2Bridge;
+
+        // TODO
+        // We use OpenZeppelin's AccessControl instead of Ownable to prevent confusion on
+        // front-ends that query the 'owner' method of Ownable. 
+        _grantRole(DEFAULT_ADMIN_ROLE, Lib_PredeployAddresses.TOKENURI_ADMIN);
     }
 
     modifier onlyL2Bridge() {
@@ -48,8 +57,23 @@ contract L2StandardERC721 is IL2StandardERC721, ERC721 {
 
     // slither-disable-next-line external-function
     function burn(address _from, uint256 _tokenId) public virtual onlyL2Bridge {
+        _setTokenURI(_tokenId, "");
         _burn(_tokenId);
 
         emit Burn(_from, _tokenId);
+    }
+
+    // slither-disable-next-line external-function
+    function setTokenURI(uint256 _tokenId, string memory _tokenURI) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        _setTokenURI(_tokenId, _tokenURI);
+    }
+
+    // slither-disable-next-line external-function
+    function setBaseURI(string memory _baseURI) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        baseURI = _baseURI;
+    }
+
+    function _baseURI() internal view virtual override returns (string memory) {
+        return baseURI;
     }
 }
