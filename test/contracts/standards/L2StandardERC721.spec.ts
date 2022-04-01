@@ -1,35 +1,25 @@
 /* External Imports */
 import { ethers } from 'hardhat'
-import { Signer, ContractFactory, Contract } from 'ethers'
+import { Signer, Contract } from 'ethers'
 import {
   smock,
   FakeContract,
-  MockContractFactory,
-  MockContract,
 } from '@defi-wonderland/smock'
 
 /* Internal Imports */
 import { expect } from '../../setup'
-import { predeploys, getContractInterface } from '../../../src'
-import { JsonRpcProvider } from '@ethersproject/providers'
 
 const DEFAULT_ADMIN_ROLE = ethers.constants.HashZero
 const TOKEN_ID = 10
 const TOKEN_URI = "11111"
 const BASE_URI = "AAAAA"
-const DUMMY_L1BRIDGE_ADDRESS: string =
-  '0x1234123412341234123412341234123412341234'
-const DUMMY_L2_CROSSDOMAINMESSENGER_ADDRESS: string =
+const DUMMY_L1ERC721_ADDRESS: string =
   '0x2234223412342234223422342234223422342234'
 
 describe('L2StandardERC721', () => {
   let tokenURIAdmin: Signer
   let l2BridgeImpersonator: Signer
-
   let alice: Signer
-  let Factory__L1ERC721: MockContractFactory<ContractFactory>
-  // TODO: change l1erc721 to dummy
-  let L1ERC721: MockContract<Contract>
   let Fake__L2ERC721Bridge: FakeContract
   let L2StandardERC721: Contract
   let tokenURIAdminAddress: string
@@ -42,17 +32,11 @@ describe('L2StandardERC721', () => {
     l2BridgeImpersonatorAddress = await l2BridgeImpersonator.getAddress()
     aliceAddress = await alice.getAddress()
 
-    // deploy an ERC721 contract on L1
-    Factory__L1ERC721 = await smock.mock(
-      '@openzeppelin/contracts/token/ERC721/ERC721.sol:ERC721'
-    )
-    L1ERC721 = await Factory__L1ERC721.deploy('L1ERC721', 'ERC')
-    
     L2StandardERC721 = await (
       await ethers.getContractFactory('L2StandardERC721')
     ).deploy(
       l2BridgeImpersonatorAddress,
-      L1ERC721.address,
+      DUMMY_L1ERC721_ADDRESS,
       'L2ERC721',
       'ERC'
     )
@@ -85,7 +69,7 @@ describe('L2StandardERC721', () => {
   describe('constructor', () => {
     it('should be able to create a standard ERC721 contract with the correct parameters', async () => {
       expect(await L2StandardERC721.l2Bridge()).to.equal(l2BridgeImpersonatorAddress)
-      expect(await L2StandardERC721.l1Token()).to.equal(L1ERC721.address)
+      expect(await L2StandardERC721.l1Token()).to.equal(DUMMY_L1ERC721_ADDRESS)
       expect(await L2StandardERC721.name()).to.equal('L2ERC721')
       expect(await L2StandardERC721.symbol()).to.equal('ERC')
 
