@@ -47,6 +47,9 @@ The relevant smart contracts and tests:
       * [messaging/](./test/contracts/L2/messaging)
         * [L2ERC721Bridge.spec.ts](./test/contracts/L2/messaging/L2ERC721Bridge.spec.ts)
         * [L2StandardERC721Factory.spec.ts](./test/contracts/L2/messaging/L2StandardERC721Factory.spec.ts)
+    * [standards/](./test/contracts/standards)
+      * [L2StandardERC721.spec.ts](./test/contracts/standards/L2StandardERC721.spec.ts)
+      
 
 
 ## Testing
