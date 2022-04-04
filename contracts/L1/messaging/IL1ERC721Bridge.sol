@@ -32,6 +32,12 @@ interface IL1ERC721Bridge {
      ********************/
 
     /**
+     * @dev get the maximum number of NFTs that can be sent to L2 at one time.
+     * @return Maximum batch size.
+     */
+    function MAX_BATCH_SIZE() external returns (uint8);
+
+    /**
      * @dev get the address of the corresponding L2 bridge contract.
      * @return Address of the corresponding L2 bridge contract.
      */
@@ -71,6 +77,44 @@ interface IL1ERC721Bridge {
         address _l2Token,
         address _to,
         uint256 _tokenId,
+        uint32 _l2Gas,
+        bytes calldata _data
+    ) external;
+
+    /**
+     * @dev deposit the batch of ERC721 tokens to the caller on L2.
+     * @param _l1Tokens Address array of the L1 ERC721s we are depositing
+     * @param _l2Tokens Address array of the L1 respective L2 ERC721s
+     * @param _tokenIds Token ID array of the ERC721s to deposit.
+     * @param _l2Gas Gas limit required to complete the deposit on L2.
+     * @param _data Optional data to forward to L2. This data is provided
+     *        solely as a convenience for external contracts. Aside from enforcing a maximum
+     *        length, these contracts provide no guarantees about its content.
+     */
+    function depositBatchERC721(
+        address[] memory _l1Tokens,
+        address[] memory _l2Tokens,
+        uint256[] memory _tokenIds,
+        uint32 _l2Gas,
+        bytes calldata _data
+    ) external;
+
+    /**
+     * @dev deposit the batch of ERC721 tokens to a recipient on L2.
+     * @param _l1Tokens Address array of the L1 ERC721s we are depositing
+     * @param _l2Tokens Address array of the L1 respective L2 ERC721s
+     * @param _to L2 address to credit the withdrawals to.
+     * @param _tokenIds Token ID array of the ERC721s to deposit.
+     * @param _l2Gas Gas limit required to complete the deposit on L2.
+     * @param _data Optional data to forward to L2. This data is provided
+     *        solely as a convenience for external contracts. Aside from enforcing a maximum
+     *        length, these contracts provide no guarantees about its content.
+     */
+    function depositBatchERC721To(
+        address[] memory _l1Tokens,
+        address[] memory _l2Tokens,
+        address _to,
+        uint256[] memory _tokenIds,
         uint32 _l2Gas,
         bytes calldata _data
     ) external;
