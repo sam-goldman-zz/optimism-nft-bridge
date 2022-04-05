@@ -217,7 +217,7 @@ describe('L1ERC721Bridge', () => {
             FINALIZATION_GAS,
             NON_NULL_BYTES32
           )
-        ).to.be.revertedWith('ERC721: transfer of token that is not own')
+        ).to.be.revertedWith('ERC721: transfer from incorrect owner')
       })
 
       it('depositERC721To(): will revert if ERC721.safeTransferFrom() reverts', async () => {
@@ -230,7 +230,7 @@ describe('L1ERC721Bridge', () => {
             FINALIZATION_GAS,
             NON_NULL_BYTES32
           )
-        ).to.be.revertedWith('ERC721: transfer of token that is not own')
+        ).to.be.revertedWith('ERC721: transfer from incorrect owner')
       })
 
       it('depositERC721To(): will revert if the L1 ERC721 is zero address', async () => {
