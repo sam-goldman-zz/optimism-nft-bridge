@@ -59,12 +59,17 @@ Run the tests for L1ERC721Bridge:
 yarn test --no-compile ./test/contracts/L1/messaging/L1ERC721Bridge.spec.ts
 ```
 
-and L2ERC721Bridge:
+L2ERC721Bridge:
 ```shell
 yarn test --no-compile ./test/contracts/L2/messaging/L2ERC721Bridge.spec.ts
 ```
 
-and L2StandardERC721Factory:
+L2StandardERC721Factory:
 ```shell
 yarn test --no-compile ./test/contracts/L2/messaging/L2StandardERC721Factory.spec.ts
+```
+
+L2StandardERC721:
+```shell
+yarn test --no-compile ./test/contracts/standards/L2StandardERC721.spec.ts
 ```
