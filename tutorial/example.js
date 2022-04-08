@@ -117,7 +117,7 @@ async function main() {
   console.log(`Balance on L1: ${await L1ERC721.balanceOf(l1Wallet.address)}`) // 0
   console.log(`Balance on L2: ${await L2StandardERC721.balanceOf(l1Wallet.address)}`) // 1
 
-  // // Withdraw the NFT on L2. This sends a message to the L1 contract to unlock the L1 NFT on our behalf.
+  // Withdraw the NFT on L2. This sends a message to the L1 contract to unlock the L1 NFT on our behalf.
   console.log(`Withdrawing tokens back to L1 ...`)
   const tx3 = await L2ERC721Bridge.withdraw(
     L2StandardERC721.address,
@@ -127,14 +127,13 @@ async function main() {
   )
   await tx3.wait()
 
-  // // Wait for the message to be relayed to L1.
-  // console.log(`Waiting for withdrawal to be relayed to L1...`)
-  // const [ msgHash2 ] = await watcher.getMessageHashesFromL2Tx(tx3.hash)
-  // await watcher.getL1TransactionReceipt(msgHash2)
+  // Wait for the message to be relayed to L1.
+  console.log(`Waiting for withdrawal to be relayed to L1...`)
+  await sleep(6000);
 
-  // // Log balances again!
-  // console.log(`Balance on L1: ${await L1ERC721.balanceOf(l1Wallet.address)}`) // 1234
-  // console.log(`Balance on L2: ${await L2StandardERC721.balanceOf(l1Wallet.address)}`) // 0
+  // Log balances again!
+  console.log(`Balance on L1: ${await L1ERC721.balanceOf(l1Wallet.address)}`) // 1
+  console.log(`Balance on L2: ${await L2StandardERC721.balanceOf(l1Wallet.address)}`) // 0
 }
 
 main()
