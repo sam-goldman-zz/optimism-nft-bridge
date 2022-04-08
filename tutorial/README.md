@@ -14,9 +14,13 @@ Next, follow the instructions [here](https://github.com/ethereum-optimism/optimi
 
 ### Install files
 
-Clone this repo:
+Clone the main repo if you haven't already:
 ```
 git clone https://github.com/sam-goldman/optimism-nft-bridge.git
+```
+
+Navigate to the project's root directory:
+```
 cd optimism-nft-bridge
 ```
 
@@ -50,7 +54,7 @@ Run the tutorial:
 yarn hardhat run --no-compile tutorial/example.js
 ```
 
-The script should output something like the following:
+The script should output the following (it's fine if you see different addresses):
 ```
 Deploying L1 ERC721...
 L1ERC721 deployed @ 0x172076E0166D1F9Cc711C77Adf8488051744980C
