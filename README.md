@@ -10,7 +10,7 @@ git clone https://github.com/sam-goldman/optimism-nft-bridge.git
 cd optimism-nft-bridge
 ```
 
-Install `npm` packages:
+Install packages:
 ```shell
 yarn install
 ```
