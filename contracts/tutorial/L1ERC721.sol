@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 /**
  * @title L1ERC721
- * @dev A simple ERC721 contract
+ * @dev A simple ERC721 contract for the tutorial
  */
 contract L1ERC721 is ERC721 {
   uint private _tokenId;

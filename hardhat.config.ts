@@ -30,6 +30,8 @@ const config: HardhatUserConfig = {
       accounts: DEFAULT_ACCOUNTS_HARDHAT,
       blockGasLimit: RUN_OVM_TEST_GAS * 2,
       live: false,
+      gasPrice: 0,
+      gas: 'auto',
       saveDeployments: false,
       tags: ['local'],
     },

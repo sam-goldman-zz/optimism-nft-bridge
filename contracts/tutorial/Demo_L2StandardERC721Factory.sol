@@ -2,7 +2,7 @@
 pragma solidity ^0.8.9;
 
 /* Contract Imports */
-import { L2StandardERC721 } from "../../standards/L2StandardERC721.sol";
+import { L2StandardERC721 } from "../standards/L2StandardERC721.sol";
 
 /**
  * @title Demo L2StandardERC721Factory

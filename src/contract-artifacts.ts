@@ -114,12 +114,6 @@
         } catch {}
         
 
-        let L1ERC721
-        try {
-          L1ERC721 = require('../artifacts/contracts/L1/tutorial/Demo_L1ERC721.sol/L1ERC721.json')
-        } catch {}
-        
-
         let BondManager
         try {
           BondManager = require('../artifacts/contracts/L1/verification/BondManager.sol/BondManager.json')
@@ -231,12 +225,6 @@
         let TeleportrDisburser
         try {
           TeleportrDisburser = require('../artifacts/contracts/L2/teleportr/TeleportrDisburser.sol/TeleportrDisburser.json')
-        } catch {}
-        
-
-        let Demo_L2StandardERC721Factory
-        try {
-          Demo_L2StandardERC721Factory = require('../artifacts/contracts/L2/tutorial/Demo_L2StandardERC721Factory.sol/Demo_L2StandardERC721Factory.json')
         } catch {}
         
 
@@ -456,6 +444,18 @@
         } catch {}
         
 
+        let Demo_L2StandardERC721Factory
+        try {
+          Demo_L2StandardERC721Factory = require('../artifacts/contracts/tutorial/Demo_L2StandardERC721Factory.sol/Demo_L2StandardERC721Factory.json')
+        } catch {}
+        
+
+        let L1ERC721
+        try {
+          L1ERC721 = require('../artifacts/contracts/tutorial/L1ERC721.sol/L1ERC721.json')
+        } catch {}
+        
+
     export const getContractArtifact = (name: string): any => {
       return {
         iL1ChugSplashDeployer,
@@ -476,7 +476,6 @@ IChainStorageContainer,
 IStateCommitmentChain,
 StateCommitmentChain,
 TeleportrDeposit,
-L1ERC721,
 BondManager,
 IBondManager,
 IL2CrossDomainMessenger,
@@ -496,7 +495,6 @@ OVM_L2ToL1MessagePasser,
 OVM_SequencerFeeVault,
 WETH9,
 TeleportrDisburser,
-Demo_L2StandardERC721Factory,
 CrossDomainEnabled,
 ICrossDomainMessenger,
 Lib_CrossDomainUtils,
@@ -532,7 +530,9 @@ TestLib_SecureMerkleTrie,
 TestLib_Buffer,
 TestLib_Bytes32Utils,
 TestLib_BytesUtils,
-TestLib_MerkleTree
+TestLib_MerkleTree,
+Demo_L2StandardERC721Factory,
+L1ERC721
       }[name]
     }
     

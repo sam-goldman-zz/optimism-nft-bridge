@@ -18,6 +18,7 @@ async function main() {
   const Factory__L1ERC721 = await hre.ethers.getContractFactory('L1ERC721')
   const Factory__L1ERC721Bridge = await hre.ethers.getContractFactory('L1ERC721Bridge')
   const Factory__L2ERC721Bridge = await hre.ethers.getContractFactory('L2ERC721Bridge')
+  const Factory__L2StandardERC721 = await hre.ethers.getContractFactory('L2StandardERC721')
   const Factory__L2StandardERC721Factory = await hre.ethers.getContractFactory('Demo_L2StandardERC721Factory')
 
   // Setup pre-deployed contracts. You can also ignore this.
@@ -27,7 +28,7 @@ async function main() {
     l2RpcProvider
   )
   const l1Messenger = new ethers.Contract(
-    '0x0165878A594ca255338adfa4d48449f69242Eb8F',
+    '0x8A791620dd6260079BF849Dc5567aDC3F2FdC318',
     getContractInterface('L1CrossDomainMessenger'),
     l1RpcProvider
   )
@@ -36,9 +37,10 @@ async function main() {
     l2Messenger.address,
     L1ERC721Bridge.address
   )
-  const L2StandardERC721Factory = await Factory__L2StandardERC721Factory
-    .connect(l2Wallet)
-    .deploy(L2ERC721Bridge.address)
+  const L2StandardERC721Factory = await Factory__L2StandardERC721Factory.connect(l2Wallet).deploy(L2ERC721Bridge.address)
+
+  // Initialize the L1 Bridge
+  await L1ERC721Bridge.initialize(l1Messenger.address, L2ERC721Bridge.address)
 
   // Deploy an ERC721 token on L1.
   console.log('Deploying L1 ERC721...')
@@ -50,16 +52,6 @@ async function main() {
 
   // Deploy the paired ERC721 token to L2.
   console.log('Deploying L2 ERC721...')
-
-  // const Factory__L2StandardERC721Factory = await smock.mock('L2StandardERC721Factory',
-  //   { provider: l2Wallet }
-  // )
-  // const L2StandardERC721Factory = await Factory__L2StandardERC721Factory.deploy()
-  // await L2StandardERC721Factory.setVariable('isStandardERC721', {
-  //   [L1ERC721.address]: true,
-  // })
-
-  const a = await L2StandardERC721Factory.isStandardERC721(L1ERC721.address)
 
   const receipt = await(
     await L2StandardERC721Factory.connect(l2Wallet).createStandardL2ERC721(
@@ -75,32 +67,23 @@ async function main() {
   ).args;
 
   // Get the L2 ERC721 address from the emited event and log it
-  const l2ERC721Address = args._l2Token;
+  const l2ERC721Address = args._l2Token
   console.log(`L2StandardERC721 deployed @ ${l2ERC721Address}`)
 
   // Create an instance of the L2 ERC721 contract at the address that was just deployed
-  const L2StandardERC721 = await Factory__L2StandardERC721.attach(l2ERC721Address).connect(l2Wallet)
-
-  const b = await L2StandardERC721.l2Bridge()
-  // const _L2StandardERC721Factory = await smock.mock(
-  //   'L2StandardERC721Factory',
-  //   // This allows us to use an ethers override {from: Fake__L2CrossDomainMessenger.address} to mock calls
-  // )
-  // const factory = await _L2StandardERC721Factory.deploy()
-  // await factory.createStandardL2ERC721()
+  const L2StandardERC721 = await Factory__L2StandardERC721.connect(l2Wallet).attach(l2ERC721Address)
 
   // Mint an NFT from the L1 Wallet
   const tx = await L1ERC721.connect(l1Wallet).mint()
   await tx.wait()
 
-  const tokenId = 1
-   // owner of tokenId is l1Wallet
-  console.log(`Owner of token ID on L1 is L1Wallet:
-    ${l1Wallet.address === await L1ERC721.ownerOf(tokenId)}`
-  )
+  // 
+  console.log(`Balance on L1: ${await L1ERC721.balanceOf(l1Wallet.address)}`) // 1
+  console.log(`Balance on L2: ${await L2StandardERC721.balanceOf(l1Wallet.address)}`) // 0
 
   // Approve the L1 bridge to transfer the NFT.
   console.log('Approving L1 bridge to transfer NFT...')
+  const tokenId = 1
   const tx1 = await L1ERC721.approve(L1ERC721Bridge.address, tokenId)
   await tx1.wait()
 
@@ -122,30 +105,27 @@ async function main() {
     L2StandardERC721.address,
     tokenId,
     2000000,
-    '0x'
+    '0x',
   )
   await tx2.wait()
 
   // Wait for the message to be relayed to L2.
-  console.log('Waiting for deposit to be relayed to L2...')
-  const [ msgHash1 ] = await watcher.getMessageHashesFromL1Tx(tx2.hash)
-
-  const receipt1 = await watcher.getL2TransactionReceipt(msgHash1, true)
-  console.log("receipt", receipt1)
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  await sleep(2000);
 
   // Log some balances to see that it worked!
   console.log(`Balance on L1: ${await L1ERC721.balanceOf(l1Wallet.address)}`) // 0
-  console.log(`Balance on L2: ${await L2StandardERC721.balanceOf(l1Wallet.address)}`) // 1234
+  console.log(`Balance on L2: ${await L2StandardERC721.balanceOf(l1Wallet.address)}`) // 1
 
-  // // Burn the tokens on L2 and ask the L1 contract to unlock on our behalf.
-  // console.log(`Withdrawing tokens back to L1 ...`)
-  // const tx3 = await L2ERC721Bridge.withdraw(
-  //   L2StandardERC721.address,
-  //   1234,
-  //   2000000,
-  //   '0x'
-  // )
-  // await tx3.wait()
+  // // Withdraw the NFT on L2. This sends a message to the L1 contract to unlock the L1 NFT on our behalf.
+  console.log(`Withdrawing tokens back to L1 ...`)
+  const tx3 = await L2ERC721Bridge.withdraw(
+    L2StandardERC721.address,
+    tokenId,
+    2000000,
+    '0x'
+  )
+  await tx3.wait()
 
   // // Wait for the message to be relayed to L1.
   // console.log(`Waiting for withdrawal to be relayed to L1...`)
