@@ -14,7 +14,9 @@ Next, follow the instructions [here](https://github.com/ethereum-optimism/optimi
 
 ### Install files
 
-Clone the main repo if you haven't already:
+If you've already installed the files according to the [README in the main repo](https://github.com/sam-goldman/optimism-nft-bridge/blob/main/README.md), feel free to skip this step and go to the Config section.
+
+Clone the main repo:
 ```
 git clone https://github.com/sam-goldman/optimism-nft-bridge.git
 ```
