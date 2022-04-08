@@ -7,8 +7,8 @@ import { L2StandardERC721 } from "../standards/L2StandardERC721.sol";
 /**
  * @title Demo L2StandardERC721Factory
  * @dev Demo L2StandardERC721FactoryFactory for the ERC721 Bridge tutorial.
- * This contract is the exact same as L2StandardERC721FactoryFactory, with the exception that
- * we pass in the L2ERC721Bridge address in the constructor instead of using 
+ * This contract is the exact same as L2StandardERC721Factory with one difference:
+ * here, we pass the L2ERC721Bridge address into the constructor, instead of using 
  * Lib_PredeployAddresses.L2_ERC721_BRIDGE. This allows us to run the tutorial locally.
  */
 contract Demo_L2StandardERC721Factory  {
@@ -21,7 +21,7 @@ contract Demo_L2StandardERC721Factory  {
     // Declare the L2ERC721Bridge address
     address l2Bridge;
 
-    // We pass in the L2ERC721Bridge address so that the tutorial works locally.
+    // We pass in the L2ERC721Bridge address here instead of using Lib_PredeployAddresses.L2_ERC721_BRIDGE.
     constructor(address _l2Bridge) {
         l2Bridge = _l2Bridge;
     }
@@ -40,7 +40,7 @@ contract Demo_L2StandardERC721Factory  {
         require(_l1Token != address(0), "Must provide L1 token address");
 
         L2StandardERC721 l2Token = new L2StandardERC721(
-            l2Bridge, // In the regular contract, this line is Lib_PredeployAddresses.L2_ERC721_BRIDGE
+            l2Bridge, // In the L2StandardERC721Factory contract, this line is Lib_PredeployAddresses.L2_ERC721_BRIDGE
             _l1Token,
             _name,
             _symbol
