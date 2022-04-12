@@ -2,7 +2,7 @@
 
 This is a tutorial to demonstrate how to use the ERC721 Bridge. We will go through the process of depositing an L1 NFT into L2, and withdrawing it back to L1. The code for the tutorial, including documentation, can be found in [example.js](https://github.com/sam-goldman/optimism-nft-bridge/blob/main/tutorial/example.js). For a high-level overview of the bridge, see [these slides](https://docs.google.com/presentation/d/1oIk3lbnxoFy-eGg04vGntAMYIAErmI-_CtWsKUMTcW8/edit#slide=id.g11ad45bf27e_0_0).
 
-If you have any questions, feel free to reach out at [sam@fanbaselabs.com](mailto:sam@fanbaselabs.com).
+If you have any questions, feel free to reach out at [sam@quixotic.io](mailto:sam@fanbaselabs.com).
 
 ## Setup
 
