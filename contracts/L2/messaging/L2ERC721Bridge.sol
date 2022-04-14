@@ -93,6 +93,12 @@ contract L2ERC721Bridge is IL2ERC721Bridge, CrossDomainEnabled {
         uint32 _l1Gas,
         bytes calldata _data
     ) internal {
+        // Check that the withdrawal is being initiated by the NFT owner
+        require(
+            _from == IL2StandardERC721(_l2Token).ownerOf(_tokenId),
+            "Withdrawal is not being initiated by NFT owner"
+        );
+
         // When a withdrawal is initiated, we burn the withdrawer's NFT to prevent subsequent L2
         // usage
         // slither-disable-next-line reentrancy-events
@@ -148,8 +154,8 @@ contract L2ERC721Bridge is IL2ERC721Bridge, CrossDomainEnabled {
             // slither-disable-next-line reentrancy-events
             emit DepositFinalized(_l1Token, _l2Token, _from, _to, _tokenId, _data);
         } else {
-            // Either the L2 ERC721 contract which is being deposited-into disagrees about the correct
-            // address of its L1 token, or does not support the correct interface.
+            // Either the L2 token which is being deposited-into disagrees about the correct address
+            // of its L1 token, or does not support the correct interface.
             // This should only happen if there is a  malicious L2 token, or if a user somehow
             // specified the wrong L2 token address to deposit into.
             // In either case, we stop the process here and construct a withdrawal

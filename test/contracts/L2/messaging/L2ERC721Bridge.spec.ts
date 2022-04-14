@@ -14,6 +14,7 @@ const DUMMY_L1BRIDGE_ADDRESS: string =
   '0x1234123412341234123412341234123412341234'
 const DUMMY_L1TOKEN_ADDRESS: string =
   '0x2234223412342234223422342234223422342234'
+const ERR_INVALID_WITHDRAWAL = 'Withdrawal is not being initiated by NFT owner'
 
 describe('L2ERC721Bridge', () => {
   let alice: Signer
@@ -179,6 +180,17 @@ describe('L2ERC721Bridge', () => {
       })
     })
 
+    it('withdraw() reverts when called by non-owner of nft', async () => {
+      await expect(
+        L2ERC721Bridge.connect(bob).withdraw(
+          Mock__L2Token.address,
+          TOKEN_ID,
+          0,
+          NON_NULL_BYTES32
+        )
+      ).to.be.revertedWith(ERR_INVALID_WITHDRAWAL)
+    })
+
     it('withdraw() burns and sends the correct withdrawal message', async () => {
       await L2ERC721Bridge.withdraw(
         Mock__L2Token.address,
@@ -218,6 +230,17 @@ describe('L2ERC721Bridge', () => {
       )
       // gaslimit should be correct
       expect(withdrawalCallToMessenger.args[2]).to.equal(0)
+    })
+
+    it('withdrawTo() reverts when called by non-owner of nft', async () => {
+      await expect(
+        L2ERC721Bridge.connect(bob).withdraw(
+          Mock__L2Token.address,
+          TOKEN_ID,
+          0,
+          NON_NULL_BYTES32
+        )
+      ).to.be.revertedWith(ERR_INVALID_WITHDRAWAL)
     })
 
     it('withdrawTo() burns and sends the correct withdrawal message', async () => {

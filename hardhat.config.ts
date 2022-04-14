@@ -30,10 +30,14 @@ const config: HardhatUserConfig = {
       accounts: DEFAULT_ACCOUNTS_HARDHAT,
       blockGasLimit: RUN_OVM_TEST_GAS * 2,
       live: false,
-      gasPrice: 0,
       gas: 'auto',
       saveDeployments: false,
       tags: ['local'],
+    },
+    kovan: {
+      chainId: 42,
+      url: process.env.CONTRACTS_RPC_URL,
+      accounts: [privateKey],
     },
     optimism: {
       url: 'http://127.0.0.1:8545',
