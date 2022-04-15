@@ -16,25 +16,18 @@ contract L2StandardERC721 is IL2StandardERC721, ERC721 {
      * @param _l1Token Address of the corresponding L1 token.
      * @param _name ERC721 name.
      * @param _symbol ERC721 symbol.
+     * @param _baseTokenURI Base Token URI of the L2 token.
      */
     constructor(
         address _l2Bridge,
         address _l1Token,
         string memory _name,
-        string memory _symbol
+        string memory _symbol,
+        string memory _baseTokenURI
     ) ERC721(_name, _symbol) {
         l1Token = _l1Token;
         l2Bridge = _l2Bridge;
-
-        bytes memory l1TokenStr = abi.encodePacked(l1Token);
-
-        // Creates a string for the baseURI according to the URL format specified in
-        // EIP-681: https://eips.ethereum.org/EIPS/eip-681.
-        baseTokenURI = string(abi.encodePacked(
-            "ethereum:",
-            l1TokenStr,
-            "@42/tokenURI?uint256="
-        ));
+        baseTokenURI = _baseTokenURI;
     }
 
     modifier onlyL2Bridge() {

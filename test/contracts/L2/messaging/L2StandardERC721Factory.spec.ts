@@ -16,6 +16,8 @@ describe('L2StandardERC721Factory', () => {
   let Factory__L1ERC721: MockContractFactory<ContractFactory>
   let L1ERC721: MockContract<Contract>
   let L2StandardERC721Factory: Contract
+  let baseURI: string
+
   before(async () => {
     [signer] = await ethers.getSigners();
 
@@ -28,6 +30,8 @@ describe('L2StandardERC721Factory', () => {
     L2StandardERC721Factory = await (
       await ethers.getContractFactory('L2StandardERC721Factory')
     ).deploy()
+
+    baseURI = ''.concat('ethereum:', L1ERC721.address, '@42/tokenURI?uint256=')
   })
 
   describe('Standard ERC721 factory', () => {
@@ -35,13 +39,13 @@ describe('L2StandardERC721Factory', () => {
       const tx = await L2StandardERC721Factory.createStandardL2ERC721(
         L1ERC721.address,
         'L2ERC721',
-        'ERC'
+        'ERC',
+        baseURI
       )
       const receipt = await tx.wait()
 
-      // The first element in the events array is a RoleGranted event emitted by AccessControl,
-      // so we query the second element to find the StandardL2ERC721Created event.
-      const erc721CreatedEvent = receipt.events[1]
+      // Get the StandardL2ERC721Created event
+      const erc721CreatedEvent = receipt.events[0]
 
       // Expect there to be an event emmited for the standard token creation
       expect(erc721CreatedEvent.event).to.be.eq('StandardL2ERC721Created')
@@ -58,6 +62,7 @@ describe('L2StandardERC721Factory', () => {
       expect(await l2Token.l1Token()).to.equal(L1ERC721.address)
       expect(await l2Token.name()).to.equal('L2ERC721')
       expect(await l2Token.symbol()).to.equal('ERC')
+      expect(await l2Token.baseTokenURI()).to.equal(baseURI)
 
       expect(await L2StandardERC721Factory.isStandardERC721(l2Token.address)).to.equal(true)
     })
@@ -67,7 +72,8 @@ describe('L2StandardERC721Factory', () => {
         L2StandardERC721Factory.createStandardL2ERC721(
           ethers.constants.AddressZero,
           'L2ERC721',
-          'ERC'
+          'ERC',
+          baseURI
         )
       ).to.be.revertedWith('Must provide L1 token address')
     })

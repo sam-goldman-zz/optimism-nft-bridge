@@ -10,7 +10,7 @@ import { Lib_PredeployAddresses } from "../../libraries/constants/Lib_PredeployA
  * @dev Factory contract for creating standard L2 ERC721 representations of L1 ERC721s
  * compatible with and working on the NFT bridge.
  */
-contract L2StandardERC721Factory  {
+contract L2StandardERC721Factory {
     event StandardL2ERC721Created(address indexed _l1Token, address indexed _l2Token);
 
     // Maps an L2 ERC721 token address to a boolean that returns true if the token was created
@@ -18,15 +18,17 @@ contract L2StandardERC721Factory  {
     mapping(address => bool) public isStandardERC721;
 
     /**
-     * @dev Creates an instance of the standard ERC721 token on L2.
+    * @dev Creates an instance of the standard ERC721 token on L2.
      * @param _l1Token Address of the corresponding L1 token.
      * @param _name ERC721 name.
      * @param _symbol ERC721 symbol.
+     * @param _baseTokenURI Base token URI of the L2 token.
      */
     function createStandardL2ERC721(
         address _l1Token,
         string memory _name,
-        string memory _symbol
+        string memory _symbol,
+        string memory _baseTokenURI
     ) external {
         require(_l1Token != address(0), "Must provide L1 token address");
 
@@ -34,7 +36,8 @@ contract L2StandardERC721Factory  {
             Lib_PredeployAddresses.L2_ERC721_BRIDGE,
             _l1Token,
             _name,
-            _symbol
+            _symbol,
+            _baseTokenURI
         );
 
         isStandardERC721[address(l2Token)] = true;

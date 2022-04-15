@@ -9,7 +9,7 @@ import { expect } from '../../setup'
 const TOKEN_ID = 10
 const DUMMY_L1ERC721_ADDRESS: string =
   '0x2234223412342234223422342234223422342234'
-const BASE_URI = ''.concat('ethereum:', DUMMY_L1ERC721_ADDRESS, '@42/tokenURI?uint256=')
+const BASE_URI: string = ''.concat('ethereum:', DUMMY_L1ERC721_ADDRESS, '@42/tokenURI?uint256=')
 
 describe('L2StandardERC721', () => {
   let l2BridgeImpersonator: Signer
@@ -30,7 +30,8 @@ describe('L2StandardERC721', () => {
       l2BridgeImpersonatorAddress,
       DUMMY_L1ERC721_ADDRESS,
       'L2ERC721',
-      'ERC'
+      'ERC',
+      BASE_URI
     )
 
     // Get a new fake L2 bridge
