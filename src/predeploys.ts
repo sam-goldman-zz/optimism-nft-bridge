@@ -19,8 +19,8 @@ export const predeploys = {
   L2StandardTokenFactory: '0x4200000000000000000000000000000000000012',
   OVM_L1BlockNumber: '0x4200000000000000000000000000000000000013',
 
-  // Placeholder (this address is just for demonstration purposes):
-  L2ERC721Bridge: '0x4200000000000000000000000000000000000043',
+  // Placeholder:
+  L2ERC721Bridge: '0xA32eA1aA7D748F3e6a06af71f8C741a69feE0052',
 
   // We're temporarily disabling OVM_ETH because the jury is still out on whether or not ETH as an
   // ERC20 is desirable.

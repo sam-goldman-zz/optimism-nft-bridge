@@ -13,7 +13,7 @@
 ### createStandardL2ERC721
 
 ```solidity
-function createStandardL2ERC721(address _l1Token, string _name, string _symbol) external nonpayable
+function createStandardL2ERC721(address _l1Token, string _name, string _symbol, string _baseTokenURI) external nonpayable
 ```
 
 
@@ -27,6 +27,7 @@ function createStandardL2ERC721(address _l1Token, string _name, string _symbol) 
 | _l1Token | address | Address of the corresponding L1 token.
 | _name | string | ERC721 name.
 | _symbol | string | ERC721 symbol.
+| _baseTokenURI | string | Base token URI of the L2 token.
 
 ### isStandardERC721
 

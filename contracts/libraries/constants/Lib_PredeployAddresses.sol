@@ -19,8 +19,6 @@ library Lib_PredeployAddresses {
         0x4200000000000000000000000000000000000012;
     address internal constant L1_BLOCK_NUMBER = 0x4200000000000000000000000000000000000013;
     
-    // Placeholders:
-    address internal constant L2_ERC721_BRIDGE = 0x9b24616ceCF6DfA875547d7F496E18CBf391088F;
-    // Placeholder address for the permissioned oracle
-    address internal constant TOKENURI_ADMIN = 0x1A3DAA6F487A480c1aD312b90FD0244871940b66;
+    // Placeholder:
+    address internal constant L2_ERC721_BRIDGE = 0xA32eA1aA7D748F3e6a06af71f8C741a69feE0052;
 }

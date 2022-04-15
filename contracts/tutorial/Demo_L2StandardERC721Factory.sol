@@ -30,12 +30,13 @@ contract Demo_L2StandardERC721Factory  {
      * @dev Creates an instance of the standard ERC721 token on L2.
      * @param _l1Token Address of the corresponding L1 token.
      * @param _name ERC721 name.
-     * @param _symbol ERC721 symbol.
+     * @param _baseTokenURI Base token URI of the L2 token.
      */
     function createStandardL2ERC721(
         address _l1Token,
         string memory _name,
-        string memory _symbol
+        string memory _symbol,
+        string memory _baseTokenURI
     ) external {
         require(_l1Token != address(0), "Must provide L1 token address");
 
@@ -43,7 +44,8 @@ contract Demo_L2StandardERC721Factory  {
             l2Bridge, // In the L2StandardERC721Factory contract, this line is Lib_PredeployAddresses.L2_ERC721_BRIDGE
             _l1Token,
             _name,
-            _symbol
+            _symbol,
+            _baseTokenURI
         );
 
         isStandardERC721[address(l2Token)] = true;

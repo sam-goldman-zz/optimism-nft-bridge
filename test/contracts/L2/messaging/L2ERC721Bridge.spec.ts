@@ -15,6 +15,7 @@ const DUMMY_L1BRIDGE_ADDRESS: string =
 const DUMMY_L1TOKEN_ADDRESS: string =
   '0x2234223412342234223422342234223422342234'
 const ERR_INVALID_WITHDRAWAL = 'Withdrawal is not being initiated by NFT owner'
+const DUMMY_BASE_URI: string = '11111'
 
 describe('L2ERC721Bridge', () => {
   let alice: Signer
@@ -55,7 +56,7 @@ describe('L2ERC721Bridge', () => {
     // Deploy an L2 ERC721
     L2ERC721 = await (
       await ethers.getContractFactory('L2StandardERC721', alice)
-    ).deploy(L2ERC721Bridge.address, DUMMY_L1TOKEN_ADDRESS, 'L2Token', 'L2T')
+    ).deploy(L2ERC721Bridge.address, DUMMY_L1TOKEN_ADDRESS, 'L2Token', 'L2T', DUMMY_BASE_URI)
   })
 
   // test the transfer flow of moving a token from L1 to L2
@@ -169,7 +170,8 @@ describe('L2ERC721Bridge', () => {
         L2ERC721Bridge.address,
         DUMMY_L1TOKEN_ADDRESS,
         'L2Token',
-        'L2T'
+        'L2T',
+        DUMMY_BASE_URI
       )
 
       await Mock__L2Token.setVariable('_owners', {
