@@ -15,6 +15,7 @@ const DUMMY_L1ERC721_ADDRESS = ethers.utils.getAddress(
 const DUMMY_L2_BRIDGE_ADDRESS = ethers.utils.getAddress(
   '0x' + 'bcdc'.repeat(10)
 )
+const ERC721RECEIVER_INTERFACE_IDENTIFIER = '0x150b7a02'
 const BASE_URI: string = ''.concat('ethereum:', DUMMY_L1ERC721_ADDRESS, '@42/tokenURI?uint256=')
 
 describe('L2CustomERC721', () => {
@@ -23,15 +24,19 @@ describe('L2CustomERC721', () => {
   let Fake__L2StandardERC721: FakeContract
   let L2CustomERC721: Contract
   let l2StandardERC721Impersonator: Signer
+  let l1ERC721Impersonator: Signer
   let aliceAddress: string
   let l2StandardERC721ImpersonatorAddress: string
+  let l1ERC721ImpersonatorAddress: string
   let Mock__L2StandardERC721Factory: MockContract<Contract>
+  let Fake__L1ERC721: FakeContract
 
   before(async () => {
-    ;[alice, l2StandardERC721Impersonator] = await ethers.getSigners()
+    ;[alice, l2StandardERC721Impersonator, l1ERC721Impersonator] = await ethers.getSigners()
     
     aliceAddress = await alice.getAddress()
     l2StandardERC721ImpersonatorAddress = await l2StandardERC721Impersonator.getAddress()
+    l1ERC721ImpersonatorAddress = await l1ERC721Impersonator.getAddress()
 
     Mock__L2StandardERC721Factory = await (
       await smock.mock('L2StandardERC721Factory')
@@ -51,6 +56,12 @@ describe('L2CustomERC721', () => {
       await ethers.getContractFactory('L2StandardERC721'),
       // This allows us to use an ethers override {from: Fake__L2ERC721Bridge.address} to mock calls
       { address: l2StandardERC721ImpersonatorAddress }
+    )
+
+    Fake__L1ERC721 = await smock.fake<Contract>(
+      await ethers.getContractFactory('L1ERC721'),
+      // This allows us to use an ethers override {from: Fake__L2ERC721Bridge.address} to mock calls
+      { address: l1ERC721ImpersonatorAddress }
     )
 
     // mint an nft to alice
@@ -81,7 +92,7 @@ describe('L2CustomERC721', () => {
       })
 
       await expect(
-        L2CustomERC721.connect(l2StandardERC721ImpersonatorAddress).onERC721Received(
+        L2CustomERC721.connect(l2StandardERC721Impersonator).onERC721Received(
           DUMMY_OPERATOR_ADDRESS,
           aliceAddress,
           TOKEN_ID,
@@ -92,6 +103,33 @@ describe('L2CustomERC721', () => {
       )
     })
 
-    // it('should mint a token ID to the correct owner and return the correct selector')
+    it('should return the correct selector and mint a token ID to the correct owner', async () => {
+      await Mock__L2StandardERC721Factory.setVariable('standardERC721Mapping', {
+        [DUMMY_L1ERC721_ADDRESS]: l2StandardERC721ImpersonatorAddress,
+      })
+
+      // Returns the ERC-165 identifier of IERC721Receiver. This call does not execute a transaction
+      // since we use callStatic.
+      const interfaceIdentifier = await L2CustomERC721.connect(l2StandardERC721Impersonator).callStatic.onERC721Received(
+        DUMMY_OPERATOR_ADDRESS,
+        aliceAddress,
+        TOKEN_ID,
+        NON_NULL_BYTES32
+      )
+
+      // Returns the expected interface identifier
+      expect(interfaceIdentifier).to.equal(ERC721RECEIVER_INTERFACE_IDENTIFIER)
+
+      // This call executes the transaction successfully
+      await L2CustomERC721.connect(l2StandardERC721Impersonator).onERC721Received(
+        DUMMY_OPERATOR_ADDRESS,
+        aliceAddress,
+        TOKEN_ID,
+        NON_NULL_BYTES32
+      )
+
+      // A new token ID is minted from the custom token contract and sent to alice
+      expect(await L2CustomERC721.ownerOf(TOKEN_ID)).to.equal(aliceAddress)
+    })
   })
 })

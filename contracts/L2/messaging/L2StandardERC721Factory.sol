@@ -11,7 +11,7 @@ import { IL2StandardERC721Factory } from './IL2StandardERC721Factory.sol';
  * @dev Factory contract for creating standard L2 ERC721 representations of L1 ERC721s
  * compatible with and working on the NFT bridge.
  */
-contract L2StandardERC721Factory is IL2StandardERC721Factory{
+contract L2StandardERC721Factory is IL2StandardERC721Factory {
     mapping(address => bool) public isStandardERC721;
 
     mapping(address => address) public standardERC721Mapping;
