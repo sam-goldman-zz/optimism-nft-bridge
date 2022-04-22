@@ -5,7 +5,6 @@ pragma solidity ^0.8.9;
 import { IL1ERC721Bridge } from "./IL1ERC721Bridge.sol";
 import { IL2ERC721Bridge } from "../../L2/messaging/IL2ERC721Bridge.sol";
 import { IERC721 } from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import { IERC721Receiver } from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
 /* Library Imports */
 import { CrossDomainEnabled } from "../../libraries/bridge/CrossDomainEnabled.sol";
@@ -16,9 +15,8 @@ import { Address } from "@openzeppelin/contracts/utils/Address.sol";
  * @dev The L1 ERC721 Bridge is a contract which stores deposited L1 NFTs that are in use
  * on L2. It synchronizes a corresponding L2 Bridge, informing it of deposits and listening
  * to it for newly finalized withdrawals.
- *
  */
-contract L1ERC721Bridge is IERC721Receiver, IL1ERC721Bridge, CrossDomainEnabled {
+contract L1ERC721Bridge is IL1ERC721Bridge, CrossDomainEnabled {
     /********************************
      * External Contract References *
      ********************************/
@@ -111,7 +109,7 @@ contract L1ERC721Bridge is IERC721Receiver, IL1ERC721Bridge, CrossDomainEnabled 
         // When a deposit is initiated on L1, the L1 Bridge transfers the NFT to itself for future
         // withdrawals.
         // slither-disable-next-line reentrancy-events, reentrancy-benign
-        IERC721(_l1Token).safeTransferFrom(_from, address(this), _tokenId);
+        IERC721(_l1Token).transferFrom(_from, address(this), _tokenId);
 
         // Construct calldata for _l2Token.finalizeDeposit(_to, _tokenId)
         bytes memory message = abi.encodeWithSelector(
@@ -150,6 +148,12 @@ contract L1ERC721Bridge is IERC721Receiver, IL1ERC721Bridge, CrossDomainEnabled 
         uint256 _tokenId,
         bytes calldata _data
     ) external onlyFromCrossDomainAccount(l2ERC721Bridge) {
+        // Checks that the L1/L2 token pair has a token ID that is escrowed in the L1 Bridge
+        require(
+            deposits[_l1Token][_l2Token][_tokenId] == true,
+            "Token ID is not escrowed in the L1 Bridge"
+        );
+
         deposits[_l1Token][_l2Token][_tokenId] = false;
 
         // When a withdrawal is finalized on L1, the L1 Bridge transfers the NFT to the withdrawer
@@ -158,17 +162,5 @@ contract L1ERC721Bridge is IERC721Receiver, IL1ERC721Bridge, CrossDomainEnabled 
 
         // slither-disable-next-line reentrancy-events
         emit ERC721WithdrawalFinalized(_l1Token, _l2Token, _from, _to, _tokenId, _data);
-    }
-
-    /**
-     * @inheritdoc IERC721Receiver
-     */
-    function onERC721Received(
-        address operator,
-        address from,
-        uint256 tokenId,
-        bytes calldata data
-    ) external pure returns (bytes4) {
-        return IERC721Receiver.onERC721Received.selector;
     }
 }

@@ -17,30 +17,38 @@ contract L2StandardERC721Factory {
     // with the L2StandardERC721Factory.
     mapping(address => bool) public isStandardERC721;
 
+    // Maps an L1 ERC721 token address to an L2 Standard ERC721 token address. This mapping can
+    // only be updated once per L1 ERC721 token.
+    mapping(address => address) public standardERC721Mapping;
+
     /**
-    * @dev Creates an instance of the standard ERC721 token on L2.
+     * @dev Creates an instance of the standard ERC721 token on L2.
      * @param _l1Token Address of the corresponding L1 token.
      * @param _name ERC721 name.
      * @param _symbol ERC721 symbol.
-     * @param _baseTokenURI Base token URI of the L2 token.
      */
     function createStandardL2ERC721(
         address _l1Token,
         string memory _name,
-        string memory _symbol,
-        string memory _baseTokenURI
+        string memory _symbol
     ) external {
         require(_l1Token != address(0), "Must provide L1 token address");
+
+        // Only one L2 Standard Token can exist for each L1 Token
+        require(
+            standardERC721Mapping[_l1Token] == address(0),
+            "L2 Standard Token already exists for this L1 Token"
+        );
 
         L2StandardERC721 l2Token = new L2StandardERC721(
             Lib_PredeployAddresses.L2_ERC721_BRIDGE,
             _l1Token,
             _name,
-            _symbol,
-            _baseTokenURI
+            _symbol
         );
 
         isStandardERC721[address(l2Token)] = true;
+        standardERC721Mapping[_l1Token] = address(l2Token);
         emit StandardL2ERC721Created(_l1Token, address(l2Token));
     }
 }

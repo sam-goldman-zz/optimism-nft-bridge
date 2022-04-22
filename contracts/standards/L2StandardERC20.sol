@@ -37,7 +37,7 @@ contract L2StandardERC20 is IL2StandardERC20, ERC20 {
             IL2StandardERC20.burn.selector;
         return _interfaceId == firstSupportedInterface || _interfaceId == secondSupportedInterface;
     }
-    
+
     // slither-disable-next-line external-function
     function mint(address _to, uint256 _amount) public virtual onlyL2Bridge {
         _mint(_to, _amount);

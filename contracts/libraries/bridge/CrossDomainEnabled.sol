@@ -43,6 +43,7 @@ contract CrossDomainEnabled {
             msg.sender == address(getCrossDomainMessenger()),
             "OVM_XCHAIN: messenger contract unauthenticated"
         );
+
         require(
             getCrossDomainMessenger().xDomainMessageSender() == _sourceDomainAccount,
             "OVM_XCHAIN: wrong sender of cross-domain message"
@@ -64,7 +65,7 @@ contract CrossDomainEnabled {
         return ICrossDomainMessenger(messenger);
     }
 
-    /**
+    /**q
      * Sends a message to an account on another domain
      * @param _crossDomainTarget The intended recipient on the destination domain
      * @param _message The data to send to the target (usually calldata to a function with

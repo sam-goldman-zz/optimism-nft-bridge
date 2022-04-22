@@ -3,9 +3,9 @@ pragma solidity ^0.8.9;
 
 import { ERC721 } from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
-import { Lib_PredeployAddresses } from "../libraries/constants/Lib_PredeployAddresses.sol";
-import { Lib_Strings } from "../libraries/utils/Lib_Strings.sol";
-import "./IL2StandardERC721.sol";
+import { Lib_PredeployAddresses } from "../../libraries/constants/Lib_PredeployAddresses.sol";
+import { Lib_Strings } from "../../libraries/utils/Lib_Strings.sol";
+import "../../standards/IL2StandardERC721.sol";
 
 contract L2StandardERC721 is IL2StandardERC721, ERC721 {
     address public l1Token;

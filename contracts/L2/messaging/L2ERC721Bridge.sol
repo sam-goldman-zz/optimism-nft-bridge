@@ -9,6 +9,8 @@ import { IL2ERC721Bridge } from "./IL2ERC721Bridge.sol";
 /* Library Imports */
 import { ERC165Checker } from "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 import { CrossDomainEnabled } from "../../libraries/bridge/CrossDomainEnabled.sol";
+import { Lib_PredeployAddresses } from "../../libraries/constants/Lib_PredeployAddresses.sol";
+import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 
 /* Contract Imports */
 import { IL2StandardERC721 } from "../../standards/IL2StandardERC721.sol";
@@ -56,6 +58,10 @@ contract L2ERC721Bridge is IL2ERC721Bridge, CrossDomainEnabled {
         uint32 _l1Gas,
         bytes calldata _data
     ) external virtual {
+        // Modifier requiring sender to be EOA.  This check could be bypassed by a malicious
+        // contract via initcode, but it takes care of the user error we want to avoid.
+        require(!Address.isContract(msg.sender), "Account not EOA");
+
         _initiateWithdrawal(_l2Token, msg.sender, msg.sender, _tokenId, _l1Gas, _data);
     }
 
