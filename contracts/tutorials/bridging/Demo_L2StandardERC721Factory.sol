@@ -11,12 +11,11 @@ import { L2StandardERC721 } from "../../standards/L2StandardERC721.sol";
  * here, we pass the L2ERC721Bridge address into the constructor, instead of using 
  * Lib_PredeployAddresses.L2_ERC721_BRIDGE. This allows us to run the tutorial locally.
  */
-contract Demo_L2StandardERC721Factory  {
+contract Demo_L2StandardERC721Factory {
     event StandardL2ERC721Created(address indexed _l1Token, address indexed _l2Token);
 
-    // Maps an L2 ERC721 token address to a boolean that returns true if the token was created
-    // with the L2StandardERC721Factory.
     mapping(address => bool) public isStandardERC721;
+    mapping(address => address) public standardERC721Mapping;
 
     // Declare the L2ERC721Bridge address
     address l2Bridge;
@@ -30,24 +29,29 @@ contract Demo_L2StandardERC721Factory  {
      * @dev Creates an instance of the standard ERC721 token on L2.
      * @param _l1Token Address of the corresponding L1 token.
      * @param _name ERC721 name.
-     * @param _baseTokenURI Base token URI of the L2 token.
+     * @param _symbol ERC721 symbol.
      */
     function createStandardL2ERC721(
         address _l1Token,
         string memory _name,
-        string memory _symbol,
-        string memory _baseTokenURI
+        string memory _symbol
     ) external {
         require(_l1Token != address(0), "Must provide L1 token address");
+
+        require(
+            standardERC721Mapping[_l1Token] == address(0),
+            "L2 Standard Token already exists for this L1 Token"
+        );
 
         L2StandardERC721 l2Token = new L2StandardERC721(
             l2Bridge, // In the L2StandardERC721Factory contract, this line is Lib_PredeployAddresses.L2_ERC721_BRIDGE
             _l1Token,
             _name,
-            _symbol        
+            _symbol
         );
 
         isStandardERC721[address(l2Token)] = true;
+        standardERC721Mapping[_l1Token] = address(l2Token);
         emit StandardL2ERC721Created(_l1Token, address(l2Token));
     }
 }

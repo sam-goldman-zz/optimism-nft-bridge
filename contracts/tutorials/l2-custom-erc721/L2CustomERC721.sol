@@ -79,10 +79,16 @@ contract L2CustomERC721 is IERC721Receiver, IL2StandardERC721, ERC721 {
         return baseTokenURI;
     }
 
+    // TODO: docs. note that this function should only be called by tokens which were consolidated from the standard erc721 contract. if not, call l2Bridge.withdrawTo instead
     function withdrawToL1(address _to, uint _tokenId, address _l2StandardERC721) external {
         require(
             msg.sender == ownerOf(_tokenId),
             "Only the NFT owner can withdraw to L1"
+        );
+
+        require(
+            IL2StandardERC721Factory(l2StandardERC721Factory).isStandardERC721(_l2StandardERC721),
+            "Inputted contract must be a Standard L2 ERC721 contract"
         );
 
         // When a withdrawal is initiated, we burn the withdrawer's NFT to prevent subsequent L2
@@ -111,12 +117,12 @@ contract L2CustomERC721 is IERC721Receiver, IL2StandardERC721, ERC721 {
     ) external returns (bytes4) {
         require(
             IL2StandardERC721Factory(l2StandardERC721Factory).isStandardERC721(msg.sender),
-            "Transfer not sent from a Standard L2 ERC721 contract"
+            "Function must be called by a Standard L2 ERC721 contract"
         );
 
         require(
             msg.sender == IL2StandardERC721Factory(l2StandardERC721Factory).standardERC721Mapping(l1Token),
-            "Transfer sent from a Standard L2 ERC721 contract that does not map to the correct L1 ERC721"
+            "Function was called by a Standard L2 ERC721 contract that does not map to the correct L1 ERC721"
         );
 
         // Mints token ID to the true owner of the NFT

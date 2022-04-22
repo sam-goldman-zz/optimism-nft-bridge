@@ -375,6 +375,24 @@ function transferFrom(address from, address to, uint256 tokenId) external nonpay
 | to | address | undefined
 | tokenId | uint256 | undefined
 
+### withdrawToL1
+
+```solidity
+function withdrawToL1(address _to, uint256 _tokenId, address _l2StandardERC721) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| _to | address | undefined
+| _tokenId | uint256 | undefined
+| _l2StandardERC721 | address | undefined
+
 
 
 ## Events

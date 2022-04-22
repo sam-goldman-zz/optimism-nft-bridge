@@ -1,7 +1,11 @@
 const ethers = require('ethers')
 const hre = require("hardhat")
+const { getContractInterface } = require('../../src/contract-defs')
 const { predeploys } = require('@eth-optimism/contracts')
 require('dotenv').config()
+
+// Dummy variables
+const DUMMY_L1_ERC721_ADDRESS = ethers.utils.getAddress('0x' + 'abba'.repeat(10))
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -15,13 +19,12 @@ async function main() {
   // Both will use the same private key.
   const key = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
   const l1Wallet = new ethers.Wallet(key, l1RpcProvider)
-  const l2Wallet = new ethers.Wallet(key, l2RpcProvider)
+  const alice = new ethers.Wallet(key, l2RpcProvider)
 
   // Set up some contract factories. You can ignore this stuff.
   const Factory__L1ERC721 = await hre.ethers.getContractFactory('L1ERC721')
   const Factory__L1ERC721Bridge = await hre.ethers.getContractFactory('L1ERC721Bridge')
   const Factory__L2ERC721Bridge = await hre.ethers.getContractFactory('L2ERC721Bridge')
-  const Factory__L2StandardERC721 = await hre.ethers.getContractFactory('L2StandardERC721')
   // Demo_L2StandardERC721Factory is the exact same contract as L2StandardERC721FactoryFactory,
   // with one minor difference which allows us to run the tutorial locally.
   const Factory__L2StandardERC721Factory = await hre.ethers.getContractFactory('Demo_L2StandardERC721Factory')
@@ -30,12 +33,35 @@ async function main() {
   const l1MessengerAddress = '0x8A791620dd6260079BF849Dc5567aDC3F2FdC318' // Proxy__OVM_L1CrossDomainMessenger address
   const l2MessengerAddress = predeploys.L2CrossDomainMessenger
   const L1ERC721Bridge = await Factory__L1ERC721Bridge.connect(l1Wallet).deploy()
-  const L2ERC721Bridge = await Factory__L2ERC721Bridge.connect(l2Wallet).deploy(
+  const L2ERC721Bridge = await Factory__L2ERC721Bridge.connect(alice).deploy(
     l2MessengerAddress,
     L1ERC721Bridge.address
   )
   const L2StandardERC721Factory = await Factory__L2StandardERC721Factory
-    .connect(l2Wallet).deploy(L2ERC721Bridge.address)
+    .connect(alice).deploy(L2ERC721Bridge.address)
+  const deploymentReceipt = await (
+    await L2StandardERC721Factory.createStandardL2ERC721(
+      DUMMY_L1_ERC721_ADDRESS,
+      'L2ERC721',
+      'ERC'
+    )
+  ).wait()
+  
+  const l2StandardERC721CreatedEvent = deploymentReceipt.events[0]
+  const L2StandardERC721 = new ethers.Contract(
+    l2StandardERC721CreatedEvent.args._l2Token,
+    getContractInterface('L2StandardERC721'),
+    alice
+  )
+  const L2CustomERC721 = await (
+    await hre.ethers.getContractFactory('L2CustomERC721')
+  ).deploy(
+    L2ERC721Bridge.address,
+    DUMMY_L1_ERC721_ADDRESS,
+    L2StandardERC721Factory.address,
+    'L2ERC721',
+    'ERC'
+  )
 
   // Initialize the L1 Bridge
   await L1ERC721Bridge.initialize(l1MessengerAddress, L2ERC721Bridge.address)
@@ -52,7 +78,7 @@ async function main() {
   console.log('Deploying L2 ERC721...')
 
   const receipt = await(
-    await L2StandardERC721Factory.connect(l2Wallet).createStandardL2ERC721(
+    await L2StandardERC721Factory.connect(alice).createStandardL2ERC721(
       L1ERC721.address,
       'L2ERC721',
       'ERC'
@@ -66,9 +92,6 @@ async function main() {
   // Get the L2 ERC721 address from the emitted event and log it
   const l2ERC721Address = args._l2Token
   console.log(`L2StandardERC721 deployed @ ${l2ERC721Address}`)
-
-  // Create an instance of the L2 ERC721 contract at the address that was just deployed
-  const L2StandardERC721 = await Factory__L2StandardERC721.connect(l2Wallet).attach(l2ERC721Address)
 
   // Mint an NFT from the L1 Wallet
   const tx = await L1ERC721.connect(l1Wallet).mint()
@@ -115,7 +138,7 @@ async function main() {
   // Withdraw the NFT on L2. This burns the L2 NFT and sends a message to the L1 contract to unlock
   // the L1 NFT and send it back to the owner.
   console.log(`Withdrawing tokens back to L1 ...`)
-  const tx3 = await L2ERC721Bridge.connect(l2Wallet).withdraw(
+  const tx3 = await L2ERC721Bridge.connect(alice).withdraw(
     L2StandardERC721.address,
     tokenId,
     2000000,

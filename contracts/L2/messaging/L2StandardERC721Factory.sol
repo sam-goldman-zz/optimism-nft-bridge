@@ -13,7 +13,6 @@ import { IL2StandardERC721Factory } from './IL2StandardERC721Factory.sol';
  */
 contract L2StandardERC721Factory is IL2StandardERC721Factory {
     mapping(address => bool) public isStandardERC721;
-
     mapping(address => address) public standardERC721Mapping;
 
     /**
