@@ -93,7 +93,7 @@ contract L2CustomERC721 is IERC721Receiver, IL2StandardERC721, ERC721 {
         );
 
         require(
-            IL2StandardERC721Factory(l2StandardERC721Factory).standardERC721Mapping(l1Token) == msg.sender,
+            msg.sender == IL2StandardERC721Factory(l2StandardERC721Factory).standardERC721Mapping(l1Token),
             "Transfer sent from a Standard L2 ERC721 contract that does not map to the correct L1 ERC721"
         );
 

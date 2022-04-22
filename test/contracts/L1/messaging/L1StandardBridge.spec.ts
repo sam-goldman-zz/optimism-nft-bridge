@@ -406,7 +406,7 @@ describe('L1StandardBridge', () => {
     })
 
     it('cannot depositERC20 from a contract account', async () => {
-      await expect(
+      expect(
         L1StandardBridge.depositERC20(
           L1ERC20.address,
           DUMMY_L2_ERC20_ADDRESS,

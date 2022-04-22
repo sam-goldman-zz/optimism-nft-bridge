@@ -30,8 +30,7 @@ describe('L2StandardERC721', () => {
       l2BridgeImpersonatorAddress,
       DUMMY_L1ERC721_ADDRESS,
       'L2ERC721',
-      'ERC',
-      BASE_URI
+      'ERC'
     )
 
     // Get a new fake L2 bridge
