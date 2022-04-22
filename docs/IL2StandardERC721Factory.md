@@ -1,12 +1,12 @@
-# L2StandardERC721Factory
+# IL2StandardERC721Factory
 
 
 
-> L2StandardERC721Factory
+> IL2StandardERC721Factory
 
 
 
-*Factory contract for creating standard L2 ERC721 representations of L1 ERC721s compatible with and working on the NFT bridge.*
+
 
 ## Methods
 
@@ -31,7 +31,7 @@ function createStandardL2ERC721(address _l1Token, string _name, string _symbol) 
 ### isStandardERC721
 
 ```solidity
-function isStandardERC721(address) external view returns (bool)
+function isStandardERC721(address _account) external view returns (bool)
 ```
 
 
@@ -42,7 +42,7 @@ function isStandardERC721(address) external view returns (bool)
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address | undefined
+| _account | address | undefined
 
 #### Returns
 
@@ -53,7 +53,7 @@ function isStandardERC721(address) external view returns (bool)
 ### standardERC721Mapping
 
 ```solidity
-function standardERC721Mapping(address) external view returns (address)
+function standardERC721Mapping(address _account) external view returns (address)
 ```
 
 
@@ -64,7 +64,7 @@ function standardERC721Mapping(address) external view returns (address)
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address | undefined
+| _account | address | undefined
 
 #### Returns
 

@@ -144,6 +144,12 @@
         } catch {}
         
 
+        let IL2StandardERC721Factory
+        try {
+          IL2StandardERC721Factory = require('../artifacts/contracts/L2/messaging/IL2StandardERC721Factory.sol/IL2StandardERC721Factory.json')
+        } catch {}
+        
+
         let L2CrossDomainMessenger
         try {
           L2CrossDomainMessenger = require('../artifacts/contracts/L2/messaging/L2CrossDomainMessenger.sol/L2CrossDomainMessenger.json')
@@ -330,6 +336,12 @@
         } catch {}
         
 
+        let Lib_Strings
+        try {
+          Lib_Strings = require('../artifacts/contracts/libraries/utils/Lib_Strings.sol/Lib_Strings.json')
+        } catch {}
+        
+
         let AddressAliasHelper
         try {
           AddressAliasHelper = require('../artifacts/contracts/standards/AddressAliasHelper.sol/AddressAliasHelper.json')
@@ -446,13 +458,19 @@
 
         let Demo_L2StandardERC721Factory
         try {
-          Demo_L2StandardERC721Factory = require('../artifacts/contracts/tutorial/Demo_L2StandardERC721Factory.sol/Demo_L2StandardERC721Factory.json')
+          Demo_L2StandardERC721Factory = require('../artifacts/contracts/tutorials/bridging/Demo_L2StandardERC721Factory.sol/Demo_L2StandardERC721Factory.json')
         } catch {}
         
 
         let L1ERC721
         try {
-          L1ERC721 = require('../artifacts/contracts/tutorial/L1ERC721.sol/L1ERC721.json')
+          L1ERC721 = require('../artifacts/contracts/tutorials/bridging/L1ERC721.sol/L1ERC721.json')
+        } catch {}
+        
+
+        let L2CustomERC721
+        try {
+          L2CustomERC721 = require('../artifacts/contracts/tutorials/l2-custom-erc721/L2CustomERC721.sol/L2CustomERC721.json')
         } catch {}
         
 
@@ -481,6 +499,7 @@ IBondManager,
 IL2CrossDomainMessenger,
 IL2ERC20Bridge,
 IL2ERC721Bridge,
+IL2StandardERC721Factory,
 L2CrossDomainMessenger,
 L2ERC721Bridge,
 L2StandardBridge,
@@ -512,6 +531,7 @@ Lib_Buffer,
 Lib_Bytes32Utils,
 Lib_BytesUtils,
 Lib_MerkleTree,
+Lib_Strings,
 AddressAliasHelper,
 IL2StandardERC20,
 IL2StandardERC721,
@@ -532,7 +552,8 @@ TestLib_Bytes32Utils,
 TestLib_BytesUtils,
 TestLib_MerkleTree,
 Demo_L2StandardERC721Factory,
-L1ERC721
+L1ERC721,
+L2CustomERC721
       }[name]
     }
     

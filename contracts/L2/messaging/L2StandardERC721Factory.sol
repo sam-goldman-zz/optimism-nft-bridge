@@ -4,15 +4,14 @@ pragma solidity ^0.8.9;
 /* Contract Imports */
 import { L2StandardERC721 } from "../../standards/L2StandardERC721.sol";
 import { Lib_PredeployAddresses } from "../../libraries/constants/Lib_PredeployAddresses.sol";
+import { IL2StandardERC721Factory } from './IL2StandardERC721Factory.sol';
 
 /**
  * @title L2StandardERC721Factory
  * @dev Factory contract for creating standard L2 ERC721 representations of L1 ERC721s
  * compatible with and working on the NFT bridge.
  */
-contract L2StandardERC721Factory {
-    event StandardL2ERC721Created(address indexed _l1Token, address indexed _l2Token);
-
+contract L2StandardERC721Factory is IL2StandardERC721Factory{
     mapping(address => bool) public isStandardERC721;
 
     mapping(address => address) public standardERC721Mapping;

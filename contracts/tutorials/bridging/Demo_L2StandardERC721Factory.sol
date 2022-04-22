@@ -44,8 +44,7 @@ contract Demo_L2StandardERC721Factory  {
             l2Bridge, // In the L2StandardERC721Factory contract, this line is Lib_PredeployAddresses.L2_ERC721_BRIDGE
             _l1Token,
             _name,
-            _symbol,
-            _baseTokenURI
+            _symbol        
         );
 
         isStandardERC721[address(l2Token)] = true;
