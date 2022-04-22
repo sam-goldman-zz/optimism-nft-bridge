@@ -5,11 +5,14 @@ import { ERC721 } from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import { Lib_PredeployAddresses } from "../../libraries/constants/Lib_PredeployAddresses.sol";
 import { Lib_Strings } from "../../libraries/utils/Lib_Strings.sol";
+import { IERC721Receiver } from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "../../standards/IL2StandardERC721.sol";
+import "../../L2/messaging/IL2StandardERC721Factory.sol";
 
-contract L2StandardERC721 is IL2StandardERC721, ERC721 {
+contract L2CustomERC721 is IERC721Receiver, IL2StandardERC721, ERC721 {
     address public l1Token;
     address public l2Bridge;
+    address public l2StandardERC721Factory;
     string public baseTokenURI;
 
     /**
@@ -21,11 +24,13 @@ contract L2StandardERC721 is IL2StandardERC721, ERC721 {
     constructor(
         address _l2Bridge,
         address _l1Token,
+        address _l2StandardERC721Factory,
         string memory _name,
         string memory _symbol
     ) ERC721(_name, _symbol) {
         l1Token = _l1Token;
         l2Bridge = _l2Bridge;
+        l2StandardERC721Factory = _l2StandardERC721Factory;
 
         // Creates a base URI in the format specified by EIP-681:
         // https://eips.ethereum.org/EIPS/eip-681
@@ -41,7 +46,6 @@ contract L2StandardERC721 is IL2StandardERC721, ERC721 {
         _;
     }
 
-    // slither-disable-next-line external-function
     function supportsInterface(bytes4 _interfaceId)
         public
         view
@@ -58,14 +62,12 @@ contract L2StandardERC721 is IL2StandardERC721, ERC721 {
             super.supportsInterface(_interfaceId);
     }
 
-    // slither-disable-next-line external-function
     function mint(address _to, uint256 _tokenId) public virtual onlyL2Bridge {
         _safeMint(_to, _tokenId);
 
         emit Mint(_to, _tokenId);
     }
 
-    // slither-disable-next-line external-function
     function burn(address _from, uint256 _tokenId) public virtual onlyL2Bridge {
         _burn(_tokenId);
 
@@ -74,5 +76,30 @@ contract L2StandardERC721 is IL2StandardERC721, ERC721 {
 
     function _baseURI() internal view virtual override returns (string memory) {
         return baseTokenURI;
+    }
+
+    /**
+     * @inheritdoc IERC721Receiver
+     */
+    function onERC721Received(
+        address operator,
+        address from,
+        uint256 tokenId,
+        bytes calldata data
+    ) external returns (bytes4) {
+        require(
+            IL2StandardERC721Factory(l2StandardERC721Factory).isStandardERC721(msg.sender),
+            "Transfer not sent from a Standard L2 ERC721 contract"
+        );
+
+        require(
+            IL2StandardERC721Factory(l2StandardERC721Factory).standardERC721Mapping(l1Token) == msg.sender,
+            "Transfer sent from a Standard L2 ERC721 contract that does not map to the correct L1 ERC721"
+        );
+
+        // Mints token ID to the previous owner of the NFT
+        _safeMint(from, tokenId);
+
+        return IERC721Receiver.onERC721Received.selector;
     }
 }
