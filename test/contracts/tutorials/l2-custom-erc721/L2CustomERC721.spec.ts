@@ -21,21 +21,19 @@ const BASE_URI: string = ''.concat('ethereum:', DUMMY_L1ERC721_ADDRESS, '@42/tok
 describe('L2CustomERC721', () => {
   let l2BridgeImpersonator: Signer
   let alice: Signer
-  let Fake__L2StandardERC721: FakeContract
+  let L2StandardERC721: Contract
   let L2CustomERC721: Contract
-  let l2StandardERC721Impersonator: Signer
   let l1ERC721Impersonator: Signer
   let aliceAddress: string
-  let l2StandardERC721ImpersonatorAddress: string
   let l1ERC721ImpersonatorAddress: string
   let Mock__L2StandardERC721Factory: MockContract<Contract>
   let Fake__L1ERC721: FakeContract
+  let Fake__L2ERC721Bridge: FakeContract
 
   before(async () => {
-    ;[alice, l2StandardERC721Impersonator, l1ERC721Impersonator] = await ethers.getSigners()
+    ;[alice, l1ERC721Impersonator, l2BridgeImpersonator] = await ethers.getSigners()
     
     aliceAddress = await alice.getAddress()
-    l2StandardERC721ImpersonatorAddress = await l2StandardERC721Impersonator.getAddress()
     l1ERC721ImpersonatorAddress = await l1ERC721Impersonator.getAddress()
 
     Mock__L2StandardERC721Factory = await (
@@ -52,10 +50,13 @@ describe('L2CustomERC721', () => {
       'ERC'
     )
 
-    Fake__L2StandardERC721 = await smock.fake<Contract>(
+    L2StandardERC721 = await (
       await ethers.getContractFactory('L2StandardERC721'),
-      // This allows us to use an ethers override {from: Fake__L2ERC721Bridge.address} to mock calls
-      { address: l2StandardERC721ImpersonatorAddress }
+    ).deploy(
+      DUMMY_L2_BRIDGE_ADDRESS,
+      DUMMY_L1ERC721_ADDRESS,
+      'L2ERC721',
+      'ERC'
     )
 
     Fake__L1ERC721 = await smock.fake<Contract>(
@@ -64,14 +65,21 @@ describe('L2CustomERC721', () => {
       { address: l1ERC721ImpersonatorAddress }
     )
 
+    // Get a new fake L2 bridge
+    Fake__L2ERC721Bridge = await smock.fake<Contract>(
+      await ethers.getContractFactory('L2ERC721Bridge'),
+      // This allows us to use an ethers override {from: Fake__L2ERC721Bridge.address} to mock calls
+      { address: await l2BridgeImpersonator.getAddress() }
+    )
+
     // mint an nft to alice
-    // await L2StandardERC721.connect(l2BridgeImpersonator).mint(
-    //   aliceAddress,
-    //   TOKEN_ID,
-    //   {
-    //     from: Fake__L2ERC721Bridge.address,
-    //   }
-    // )
+    await L2StandardERC721.connect(l2BridgeImpersonator).mint(
+      aliceAddress,
+      TOKEN_ID,
+      {
+        from: Fake__L2ERC721Bridge.address,
+      }
+    )
   })
 
   describe('onERC721Received', () => {
@@ -86,9 +94,9 @@ describe('L2CustomERC721', () => {
       ).to.be.revertedWith("Transfer not sent from a Standard L2 ERC721 contract")
     })
 
-    it('should revert if called by a standard erc721 contract that does not map to correct l1 token', async () => {
+    it('should revert if called by a standard erc721 contract that does not map to the correct l1 token', async () => {
       await Mock__L2StandardERC721Factory.setVariable('isStandardERC721', {
-        [l2StandardERC721ImpersonatorAddress]: true,
+        [L2StandardERC721]: true,
       })
 
       await expect(
@@ -108,6 +116,13 @@ describe('L2CustomERC721', () => {
         [DUMMY_L1ERC721_ADDRESS]: l2StandardERC721ImpersonatorAddress,
       })
 
+      await Mock__L2StandardERC721.setVariable('_owners', {
+        [TOKEN_ID]: aliceAddress
+      })
+      await Mock__L2StandardERC721.setVariable('_balances', {
+        [aliceAddress]: 1
+      })
+
       // Returns the ERC-165 identifier of IERC721Receiver. This call does not execute a transaction
       // since we use callStatic.
       const interfaceIdentifier = await L2CustomERC721.connect(l2StandardERC721Impersonator).callStatic.onERC721Received(
@@ -121,12 +136,14 @@ describe('L2CustomERC721', () => {
       expect(interfaceIdentifier).to.equal(ERC721RECEIVER_INTERFACE_IDENTIFIER)
 
       // This call executes the transaction successfully
-      await L2CustomERC721.connect(l2StandardERC721Impersonator).onERC721Received(
-        DUMMY_OPERATOR_ADDRESS,
+      await Mock__L2StandardERC721.connect(alice).safeTransferFrom(
         aliceAddress,
-        TOKEN_ID,
-        NON_NULL_BYTES32
+        L2CustomERC721.address,
+        TOKEN_ID
       )
+
+      // The token ID has been escrowed in the custom erc721 contract
+      expect(await L2StandardERC721.ownerOf(TOKEN_ID)).equals(L2CustomERC721.address)
 
       // A new token ID is minted from the custom token contract and sent to alice
       expect(await L2CustomERC721.ownerOf(TOKEN_ID)).to.equal(aliceAddress)

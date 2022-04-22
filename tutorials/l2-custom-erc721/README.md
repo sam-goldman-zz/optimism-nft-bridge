@@ -1,8 +1,8 @@
-# ERC721 Bridge Tutorial
+# Consolidating tokens in an existing L2 Standard ERC721 into a new L2 Custom ERC721
 
-This is a tutorial demonstrating how to use the ERC721 Bridge. We will go through the process of depositing an L1 NFT into L2, and withdrawing it back to L1. The code for the tutorial, including documentation, can be found in [example.js](https://github.com/sam-goldman/optimism-nft-bridge/blob/main/tutorial/example.js). For a high-level overview of the bridge, see [these slides](https://docs.google.com/presentation/d/1oIk3lbnxoFy-eGg04vGntAMYIAErmI-_CtWsKUMTcW8/edit#slide=id.g11ad45bf27e_0_0).
+_. This tutorial is meant for developers who would like to deploy an L2 Custom ERC721 contract that can absorb the tokens which already exist in an L2 Standard ERC721 contract. This situation is likely to arise if a few individuals bridge their L1 NFTs to L2 before the core devs of the project release a fully featured Custom ERC721 on L2. The code in [TODO: L2CustomERC721.sol](_) shows how it is possible to consolidate NFTs such that owners still have full control over . In order to do this, each 
 
-If you have any questions, feel free to reach out at [sam@quixotic.io](mailto:sam@quixotic.io).
+If you have any questions, feel free to reach out at [sam@quixotic.io](mailto:sam@fanbaselabs.com).
 
 ## Setup
 

@@ -7,6 +7,7 @@ import { Lib_PredeployAddresses } from "../../libraries/constants/Lib_PredeployA
 import { Lib_Strings } from "../../libraries/utils/Lib_Strings.sol";
 import { IERC721Receiver } from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "../../standards/IL2StandardERC721.sol";
+import "../../L2/messaging/IL2ERC721Bridge.sol";
 import "../../L2/messaging/IL2StandardERC721Factory.sol";
 
 contract L2CustomERC721 is IERC721Receiver, IL2StandardERC721, ERC721 {
@@ -78,6 +79,27 @@ contract L2CustomERC721 is IERC721Receiver, IL2StandardERC721, ERC721 {
         return baseTokenURI;
     }
 
+    function withdrawToL1(address _to, uint _tokenId, address _l2StandardERC721) external {
+        require(
+            msg.sender == ownerOf(_tokenId),
+            "Only the NFT owner can withdraw to L1"
+        );
+
+        // When a withdrawal is initiated, we burn the withdrawer's NFT to prevent subsequent L2
+        // usage
+        _burn(_tokenId);
+
+        IL2ERC721Bridge(l2Bridge).withdrawTo(
+            _l2StandardERC721,
+            _to,
+            _tokenId,
+            0, // no need to forward any gas to l1
+            '' // empty bytes string
+        );
+
+        emit Burn(msg.sender, _tokenId);
+    }
+
     /**
      * @inheritdoc IERC721Receiver
      */
@@ -97,7 +119,7 @@ contract L2CustomERC721 is IERC721Receiver, IL2StandardERC721, ERC721 {
             "Transfer sent from a Standard L2 ERC721 contract that does not map to the correct L1 ERC721"
         );
 
-        // Mints token ID to the previous owner of the NFT
+        // Mints token ID to the true owner of the NFT
         _safeMint(from, tokenId);
 
         return IERC721Receiver.onERC721Received.selector;
