@@ -1,6 +1,6 @@
 # Optimism NFT Bridge
 
-A tutorial that demonstrates how the bridge works is [here](https://github.com/sam-goldman/optimism-nft-bridge/tree/main/tutorial).
+A tutorial that demonstrates how the bridge works is [here](https://github.com/sam-goldman/optimism-nft-bridge/tree/main/tutorials/bridging).
 
 This repository is a clone of [Optimism’s Smart Contracts](https://github.com/ethereum-optimism/optimism/tree/develop/packages/contracts), with the addition of a few files for the NFT bridge. This bridge allows users to transfer ERC721 tokens between L1 and Optimism in the same manner that they can transfer ERC20s using the [Standard Token Bridge](https://community.optimism.io/docs/developers/bridge/standard-bridge/#). The contracts have been tested locally.
 
