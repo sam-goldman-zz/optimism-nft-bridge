@@ -37,16 +37,12 @@ const config: HardhatUserConfig = {
     },
     kovan: {
       chainId: 42,
-      url: process.env.CONTRACTS_RPC_URL,
+      url: process.env.KOVAN_URL,
       accounts: [privateKey],
     },
-    optimism: {
-      url: 'http://127.0.0.1:8545',
-      saveDeployments: false,
-    },
-    'optimism-kovan': {
+    'optimistic-kovan': {
       chainId: 69,
-      url: 'https://kovan.optimism.io',
+      url: process.env.OPTI_KOVAN_URL,
       accounts: [privateKey],
     },
     'optimism-mainnet': {

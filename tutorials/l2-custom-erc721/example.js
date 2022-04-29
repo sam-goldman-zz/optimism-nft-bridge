@@ -75,13 +75,15 @@ async function main() {
   // Create an instance of the L2 ERC721 contract at the address that was just deployed
   const L2StandardERC721 = await Factory__L2StandardERC721.connect(l2Wallet).attach(l2ERC721Address)
 
+
+
+  
   // Mint an NFT from the L1 Wallet
   const tx = await L1ERC721.connect(l1Wallet).mint()
   await tx.wait()
 
   // Log the initial balances
-  console.log(`Balance on L1: ${await L1ERC721.balanceOf(l1Wallet.address)}`) // 1
-  console.log(`Balance on L2: ${await L2StandardERC721.balanceOf(l1Wallet.address)}`) // 0
+  console.log(`Balance on L1ERC721: ${await L1ERC721.balanceOf(l1Wallet.address)}`) // 1
 
   // Approve the L1 bridge to transfer the NFT.
   console.log('Approving L1 bridge to transfer NFT...')
@@ -98,7 +100,7 @@ async function main() {
   }
 
   // Call the L1 Bridge's deposit function to begin the L1 -> L2 transfer and lock the NFT in the L1 Bridge.
-  console.log('Depositing tokens into L2 ...')
+  console.log('Depositing token into L2...')
   const tx2 = await L1ERC721Bridge.depositERC721(
     L1ERC721.address,
     L2StandardERC721.address,
@@ -109,12 +111,13 @@ async function main() {
   await tx2.wait()
 
   // Wait for the message to be relayed to L2.
-  await sleep(3000);
+  // TODO
 
-  // Log the balances to see that the transfer worked! An L2 NFT was minted and sent to the owner.
-  // Until this NFT is withdrawn from L2, the L1 NFT will be locked in the L1 Bridge.
-  console.log(`Balance on L1: ${await L1ERC721.balanceOf(l1Wallet.address)}`) // 0
-  console.log(`Balance on L2: ${await L2StandardERC721.balanceOf(l1Wallet.address)}`) // 1
+  // Log the balances to see that the transfer worked. An NFT was minted on the Standard ERC721 contract
+  // and sent to the owner.
+  console.log(`Balance on L2StandardERC721: ${await L2StandardERC721.balanceOf(l1Wallet.address)}`) // 1
+
+  await L2StandardERC721.
 }
 
 main()

@@ -20,5 +20,5 @@ library Lib_PredeployAddresses {
     address internal constant L1_BLOCK_NUMBER = 0x4200000000000000000000000000000000000013;
 
     // This contract exists on Optimistic Kovan:
-    address internal constant L2_ERC721_BRIDGE = 0xA32eA1aA7D748F3e6a06af71f8C741a69feE0052;
+    address internal constant L2_ERC721_BRIDGE = 0xA779A0cA89556A9dffD47527F0aad1c2e0d66e46;
 }

@@ -456,12 +456,6 @@
         } catch {}
         
 
-        let Demo_L2StandardERC721Factory
-        try {
-          Demo_L2StandardERC721Factory = require('../artifacts/contracts/tutorials/bridging/Demo_L2StandardERC721Factory.sol/Demo_L2StandardERC721Factory.json')
-        } catch {}
-        
-
         let L1ERC721
         try {
           L1ERC721 = require('../artifacts/contracts/tutorials/bridging/L1ERC721.sol/L1ERC721.json')
@@ -551,7 +545,6 @@ TestLib_Buffer,
 TestLib_Bytes32Utils,
 TestLib_BytesUtils,
 TestLib_MerkleTree,
-Demo_L2StandardERC721Factory,
 L1ERC721,
 L2CustomERC721
       }[name]

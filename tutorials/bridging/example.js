@@ -3,7 +3,7 @@ const hre = require("hardhat")
 const { predeploys } = require('@eth-optimism/contracts')
 const optimismSDK = require("@eth-optimism/sdk")
 require('dotenv').config()
-const { getContractInterface } = require('./src')
+const { getContractInterface } = require('../../src')
 
 async function main() {
   // Set up our RPC provider connections
@@ -55,15 +55,15 @@ async function main() {
 
   // Do not remove this check.
   // It ensures that the L2 ERC721 contract is compliant and valid. If the contract doesn't implement
-  // IL2StandardERC721 or it does not correspond to the L1 token being deposited, no deposit will take place
+  // IL2StandardERC721 or it does not correspond to the L1 NFT being deposited, no deposit will take place
   // and the L2 Bridge will send the NFT to the L1 Bridge.
   if (await L2StandardERC721.l1Token() != L1ERC721.address) {
-    console.log(`L2 token does not correspond to L1 token: L2StandardERC721.l1Token() = ${await L2StandardERC721.l1Token()}`)
+    console.log(`L2 NFT does not correspond to L1 NFT: L2StandardERC721.l1Token() = ${await L2StandardERC721.l1Token()}`)
     process.exit(0)
   }
 
   // Call the L1 Bridge's deposit function to begin the L1 -> L2 transfer and lock the NFT in the L1 Bridge.
-  console.log('Depositing tokens into L2. This takes about a minute.')
+  console.log('Depositing NFT into L2. This takes about a minute.')
   const response2 = await L1ERC721Bridge.depositERC721(
     L1ERC721.address,
     L2StandardERC721.address,
@@ -86,7 +86,7 @@ async function main() {
 
   // Withdraw the NFT on L2. This burns the L2 NFT and sends a message to the L1 contract to unlock
   // the L1 NFT and send it back to the owner.
-  console.log(`Withdrawing tokens back to L1 ...`)
+  console.log(`Withdrawing NFT back to L1...`)
   const response3 = await L2ERC721Bridge.withdraw(
     L2StandardERC721.address,
     tokenId,
@@ -96,7 +96,7 @@ async function main() {
   await response3.wait()
 
   // Wait for the message to be relayed to L1.
-  console.log(`Waiting for withdrawal to be ready to relay This will take a couple minutes.`)
+  console.log(`Waiting until withdrawal is ready to be relayed. This takes a couple minutes on Kovan (and a week on mainnet!).`)
   await crossChainMessenger.waitForMessageStatus(
     response3.hash, 
     optimismSDK.MessageStatus.READY_FOR_RELAY
