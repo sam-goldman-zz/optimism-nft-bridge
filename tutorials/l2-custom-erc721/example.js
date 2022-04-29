@@ -105,7 +105,6 @@ async function main() {
   // Now that the message is ready to be relayed, we can finalize the transaction on L1.
   // This requires a second transaction, which can only be executed after a week on mainnet.
   // See more here: https://community.optimism.io/docs/developers/bridge/messaging/#for-l2-%E2%87%92-l1-transactions
-  console.log(`Ready for relay. Finalizing transaction on L1...`)
   await crossChainMessenger.finalizeMessage(response3)
 
   console.log(`Waiting for relay to be finalized...`)
