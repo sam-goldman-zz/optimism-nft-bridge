@@ -1,9 +1,7 @@
 const ethers = require('ethers')
-const hre = require("hardhat")
-const { predeploys } = require('@eth-optimism/contracts')
 const optimismSDK = require("@eth-optimism/sdk")
-require('dotenv').config()
 const { getContractInterface } = require('../../src')
+require('dotenv').config()
 
 async function main() {
   // Set up our RPC provider connections
@@ -25,14 +23,12 @@ async function main() {
   const L1ERC721Addr = '0xA779A0cA89556A9dffD47527F0aad1c2e0d66e46'
   const L1ERC721BridgeAddr = '0xb5B701310B967d16F831C28C01EF277cCFEAC7d0'
   const L2ERC721BridgeAddr = '0xA779A0cA89556A9dffD47527F0aad1c2e0d66e46'
-  const L2StandardERC721FactoryAddr = '0xb5B701310B967d16F831C28C01EF277cCFEAC7d0'
   const L2StandardERC721Addr = '0xCA6E83201a93236f52e3726bCE97DDeBee2DBb59'
 
   // Contract setup
   const L1ERC721 = new ethers.Contract(L1ERC721Addr, getContractInterface('L1ERC721'), l1Wallet)
   const L1ERC721Bridge = new ethers.Contract(L1ERC721BridgeAddr, getContractInterface('L1ERC721Bridge'), l1Wallet)
   const L2ERC721Bridge = new ethers.Contract(L2ERC721BridgeAddr, getContractInterface('L2ERC721Bridge'), l2Wallet)
-  const L2StandardERC721Factory = new ethers.Contract(L2StandardERC721FactoryAddr, getContractInterface('L2StandardERC721Factory'), l2Wallet)
   const L2StandardERC721 = new ethers.Contract(L2StandardERC721Addr, getContractInterface('L2StandardERC721'), l2Wallet)
 
   // Mint an NFT from the L1 Wallet
