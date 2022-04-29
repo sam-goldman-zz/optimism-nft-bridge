@@ -26,20 +26,11 @@ const privateKey = process.env.PRIVATE_KEY || '0x' + '11'.repeat(32) // this is 
 
 const config: HardhatUserConfig = {
   networks: {
-    // tutorial: {
-    //   chainId: 17,
-    //   url: process.env.L2_RPC_PROVIDER,
-    //   accounts: DEFAULT_ACCOUNTS_HARDHAT,
-    //   blockGasLimit: RUN_OVM_TEST_GAS * 2,
-    //   live: false,
-    //   gas: 'auto',
-    //   saveDeployments: false,
-    //   tags: ['local'],
-    // },
     hardhat: {
       accounts: DEFAULT_ACCOUNTS_HARDHAT,
       blockGasLimit: RUN_OVM_TEST_GAS * 2,
       live: false,
+      gasPrice: 0,
       gas: 'auto',
       saveDeployments: false,
       tags: ['local'],

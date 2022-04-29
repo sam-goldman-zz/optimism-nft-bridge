@@ -125,7 +125,7 @@ contract L1ERC721Bridge is IL1ERC721Bridge, CrossDomainEnabled {
         // Send calldata into L2
         // slither-disable-next-line reentrancy-events, reentrancy-benign
         sendCrossDomainMessage(l2ERC721Bridge, _l2Gas, message);
-
+    
         // slither-disable-next-line reentrancy-benign
         deposits[_l1Token][_l2Token][_tokenId] = true;
 

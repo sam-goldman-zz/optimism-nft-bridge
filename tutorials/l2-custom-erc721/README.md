@@ -1,6 +1,6 @@
 # Consolidating tokens in an existing L2 Standard ERC721 into a new L2 Custom ERC721
 
-_. This tutorial is meant for developers who would like to deploy an L2 Custom ERC721 contract that can absorb the tokens which already exist in an L2 Standard ERC721 contract. This situation is likely to arise if a few individuals bridge their L1 NFTs to L2 before the core devs of the project release a fully featured Custom ERC721 on L2. The code in [TODO: L2CustomERC721.sol](_) shows how it is possible to consolidate NFTs such that owners still have full control over . In order to do this, each 
+This tutorial is meant for developers who would like to deploy an L2 Custom ERC721 contract that can absorb the tokens which already exist in an L2 Standard ERC721 contract. This situation is likely to arise if a few individuals bridge their L1 NFTs to L2 before the core devs of the project release a fully featured Custom ERC721 on L2. The code in [TODO: L2CustomERC721.sol](_) shows how it is possible to consolidate NFTs such that owners still have full control over . In order to do this, each 
 
 If you have any questions, feel free to reach out at [sam@quixotic.io](mailto:sam@fanbaselabs.com).
 
