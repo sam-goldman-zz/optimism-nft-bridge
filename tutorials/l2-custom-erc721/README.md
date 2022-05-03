@@ -1,4 +1,4 @@
-# Consolidating NFTs from a Standard Contract into a single Custom contract
+# Consolidating NFTs from a Standard Contract into a Custom contract
 
 This tutorial will show you how to consolidate NFTs that already exist in an [L2 Standard ERC721](https://github.com/sam-goldman/optimism-nft-bridge/blob/main/contracts/standards/L2StandardERC721.sol) into an [L2 Custom ERC721](https://github.com/sam-goldman/optimism-nft-bridge/blob/main/contracts/tutorials/l2-custom-erc721/L2CustomERC721.sol). It works in the following way:
 
