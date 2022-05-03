@@ -21,7 +21,7 @@ async function main() {
   })
 
   // Pre-deployed addresses
-  const L2CustomERC721Addr = '0x9DFb517852D28113694eC9356cCb1643847B37c8' // contract is pre-deployed for the purpose of this tutorial
+  const L2CustomERC721Addr = '0x90258483694092823dCf1179932D6E8C01B783b2' // contract is pre-deployed for the purpose of this tutorial
   const L1ERC721Addr = '0xA779A0cA89556A9dffD47527F0aad1c2e0d66e46'
   const L1ERC721BridgeAddr = '0xb5B701310B967d16F831C28C01EF277cCFEAC7d0'
   const L2ERC721BridgeAddr = '0xA779A0cA89556A9dffD47527F0aad1c2e0d66e46'

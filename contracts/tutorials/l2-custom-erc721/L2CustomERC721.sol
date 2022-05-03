@@ -10,6 +10,12 @@ import "../../standards/IL2StandardERC721.sol";
 import "../../L2/messaging/IL2ERC721Bridge.sol";
 import "../../L2/messaging/IL2StandardERC721Factory.sol";
 
+/**
+ * @dev The L2 Custom ERC721 is a contract that demonstrates how it is possible to consolidate 
+ * NFTs that already exist in an L2 Standard ERC721 into a single, unified contract. When an 
+ * NFT is deposited from the Standard contract into this Custom contract, a new NFT is
+ * automatically minted and sent to the owner (via the onERC721Received function).
+ */
 contract L2CustomERC721 is IERC721Receiver, IL2StandardERC721, ERC721 {
     address public l1Token;
     address public l2StandardERC721;
@@ -80,7 +86,7 @@ contract L2CustomERC721 is IERC721Receiver, IL2StandardERC721, ERC721 {
     /**
      * @dev Withdraws the token ID to L1. This function should only be used for tokens
      *      that were consolidated from the Standard ERC721 contract. Otherwise,
-     *      use L2ERC721Bridge.withdraw or withdrawTo instead.
+     *      use L2ERC721Bridge.withdraw() or withdrawTo() instead.
      * @param _to Account to give the withdrawal to on L1.
      * @param _tokenId Token ID of the token to withdraw.
      */

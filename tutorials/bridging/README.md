@@ -3,6 +3,8 @@
 This tutorial teaches you how to use the ERC721 Bridge to transfer NFTs between Layer 1 (Ethereum) and Layer 2 (Optimism).
 It covers both deposits (Ethereum to Optimism) and withdrawals (Optimism to Ethereum). The code for the tutorial, including documentation, can be found in [example.js](https://github.com/sam-goldman/optimism-nft-bridge/blob/main/tutorials/bridging/example.js). For a high-level overview of the bridge, see [these slides](https://docs.google.com/presentation/d/1oIk3lbnxoFy-eGg04vGntAMYIAErmI-_CtWsKUMTcW8/edit#slide=id.g11ad45bf27e_0_0).
 
+The L2 Custom ERC721 contract has not been thoroughly reviewed or audited, so keep this in mind if you're considering using this pattern in production.
+
 If you have any questions, feel free to reach out at [sam@quixotic.io](mailto:sam@quixotic.io).
 
 ## Setup
