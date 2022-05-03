@@ -12,26 +12,24 @@ import "../../L2/messaging/IL2StandardERC721Factory.sol";
 
 contract L2CustomERC721 is IERC721Receiver, IL2StandardERC721, ERC721 {
     address public l1Token;
-    address public l2Bridge;
-    address public l2StandardERC721Factory;
+    address public l2StandardERC721;
     string public baseTokenURI;
 
     /**
-     * @param _l2Bridge Address of the L2 standard bridge.
      * @param _l1Token Address of the corresponding L1 token.
      * @param _name ERC721 name.
      * @param _symbol ERC721 symbol.
      */
     constructor(
-        address _l2Bridge,
         address _l1Token,
-        address _l2StandardERC721Factory,
         string memory _name,
         string memory _symbol
     ) ERC721(_name, _symbol) {
         l1Token = _l1Token;
-        l2Bridge = _l2Bridge;
-        l2StandardERC721Factory = _l2StandardERC721Factory;
+
+        // Address of the L2 Standard ERC721 that corresponds to the L1 ERC721 that was passed into the constructor.
+        l2StandardERC721 = IL2StandardERC721Factory(
+            Lib_PredeployAddresses.L2_STANDARD_ERC721_FACTORY).standardERC721Mapping(_l1Token);
 
         // Creates a base URI in the format specified by EIP-681:
         // https://eips.ethereum.org/EIPS/eip-681
@@ -43,7 +41,7 @@ contract L2CustomERC721 is IERC721Receiver, IL2StandardERC721, ERC721 {
     }
 
     modifier onlyL2Bridge() {
-        require(msg.sender == l2Bridge, "Only L2 Bridge can mint and burn");
+        require(msg.sender == Lib_PredeployAddresses.L2_ERC721_BRIDGE, "Only L2 Bridge can mint and burn");
         _;
     }
 
@@ -79,24 +77,24 @@ contract L2CustomERC721 is IERC721Receiver, IL2StandardERC721, ERC721 {
         return baseTokenURI;
     }
 
-    // TODO: docs. note that this function should only be called by tokens which were consolidated from the standard erc721 contract. if not, call l2Bridge.withdrawTo instead
-    function withdrawToL1(address _to, uint _tokenId, address _l2StandardERC721) external {
+    /**
+     * @dev Withdraws the token ID to L1. This function should only be used for tokens
+     *      that were consolidated from the Standard ERC721 contract. Otherwise,
+     *      use L2ERC721Bridge.withdraw or withdrawTo instead.
+     * @param _to Account to give the withdrawal to on L1.
+     * @param _tokenId Token ID of the token to withdraw.
+     */
+    function withdrawToL1(address _to, uint _tokenId) external {
         require(
             msg.sender == ownerOf(_tokenId),
             "Only the NFT owner can withdraw to L1"
         );
 
-        require(
-            IL2StandardERC721Factory(l2StandardERC721Factory).isStandardERC721(_l2StandardERC721),
-            "Inputted contract must be a Standard L2 ERC721 contract"
-        );
-
-        // When a withdrawal is initiated, we burn the withdrawer's NFT to prevent subsequent L2
-        // usage
+        // Burn the withdrawer's NFT to prevent further L2 usage
         _burn(_tokenId);
 
-        IL2ERC721Bridge(l2Bridge).withdrawTo(
-            _l2StandardERC721,
+        IL2ERC721Bridge(Lib_PredeployAddresses.L2_ERC721_BRIDGE).withdrawTo(
+            l2StandardERC721,
             _to,
             _tokenId,
             0, // no need to forward any gas to l1
@@ -116,13 +114,8 @@ contract L2CustomERC721 is IERC721Receiver, IL2StandardERC721, ERC721 {
         bytes calldata data
     ) external returns (bytes4) {
         require(
-            IL2StandardERC721Factory(l2StandardERC721Factory).isStandardERC721(msg.sender),
-            "Function must be called by a Standard L2 ERC721 contract"
-        );
-
-        require(
-            msg.sender == IL2StandardERC721Factory(l2StandardERC721Factory).standardERC721Mapping(l1Token),
-            "Function was called by a Standard L2 ERC721 contract that does not map to the correct L1 ERC721"
+            msg.sender == l2StandardERC721,
+            "Must be called by the correct L2 Standard ERC721"
         );
 
         // Mints token ID to the true owner of the NFT
