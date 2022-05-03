@@ -1,7 +1,5 @@
 # Consolidating NFTs from a Standard Contract into a single Custom contract
 
-npx hardhat verify --network optimistic-kovan 0x9DFb517852D28113694eC9356cCb1643847B37c8 "0xA779A0cA89556A9dffD47527F0aad1c2e0d66e46" "MusicFund" "MSF"
-
 This tutorial will show you how to consolidate NFTs that already exist in an [L2 Standard ERC721](https://github.com/sam-goldman/optimism-nft-bridge/blob/main/contracts/standards/L2StandardERC721.sol) into an [L2 Custom ERC721](https://github.com/sam-goldman/optimism-nft-bridge/blob/main/contracts/tutorials/l2-custom-erc721/L2CustomERC721.sol). It works in the following way:
 
 - The owner of an NFT in the L2 Standard ERC721 contract uses `safeTransferFrom` to escrow the NFT in the L2 Custom ERC721 contract.
