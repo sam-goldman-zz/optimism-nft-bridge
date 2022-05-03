@@ -2,11 +2,11 @@
 
 This tutorial will show you how to consolidate NFTs that already exist in an [L2 Standard ERC721](https://github.com/sam-goldman/optimism-nft-bridge/blob/main/contracts/standards/L2StandardERC721.sol) into an [L2 Custom ERC721](https://github.com/sam-goldman/optimism-nft-bridge/blob/main/contracts/tutorials/l2-custom-erc721/L2CustomERC721.sol). It works in the following way:
 
-- The owner of an NFT in the L2 Standard ERC721 contract uses `safeTransferFrom` to escrow the NFT in the L2 Custom ERC721 contract.
-- The Custom ERC721 contract automatically mints a new NFT with the same token ID and sends it to the owner (via its `onERC721Received` function).
-- If the NFT is ever withdrawn to L1, the L2 NFT is totally erased (both the NFT that was sent from the Standard Contract to the Custom contract as well as the new NFT minted to the owner).
+1. The owner of an NFT in the L2 Standard ERC721 contract uses `safeTransferFrom` to escrow the NFT in the L2 Custom ERC721 contract.
+1. The Custom ERC721 contract automatically mints a new NFT with the same token ID and sends it to the owner (via its `onERC721Received` function).
+1. If the NFT is ever withdrawn to L1, the L2 NFT is totally erased (both the NFT that was sent from the Standard Contract to the Custom contract as well as the new NFT minted to the owner).
 
-You can view the L2 Custom ERC721 that we've deployed for the tutorial on [Etherscan](https://kovan-optimistic.etherscan.io/address/0x90258483694092823dCf1179932D6E8C01B783b2#writeContract). For a high-level overview of the NFT bridge itself, check out [these slides](https://docs.google.com/presentation/d/1oIk3lbnxoFy-eGg04vGntAMYIAErmI-_CtWsKUMTcW8/edit#slide=id.g11ad45bf27e_0_0). If you have any questions, feel free to reach out at [sam@quixotic.io](mailto:sam@fanbaselabs.com).
+You can view the Custom ERC721 contract that was used for the tutorial on [Etherscan](https://kovan-optimistic.etherscan.io/address/0x90258483694092823dCf1179932D6E8C01B783b2#writeContract). For a high-level overview of the NFT bridge itself, check out [these slides](https://docs.google.com/presentation/d/1oIk3lbnxoFy-eGg04vGntAMYIAErmI-_CtWsKUMTcW8/edit#slide=id.g11ad45bf27e_0_0). If you have any questions, feel free to reach out at [sam@quixotic.io](mailto:sam@fanbaselabs.com).
 
 ## Setup
 
