@@ -1,6 +1,6 @@
-# Consolidating NFTs from a Standard Contract into a Custom contract
+# Consolidating NFTs from a Standard ERC721 contract into a Custom ERC721 contract
 
-This tutorial will show you how to consolidate NFTs that already exist in an [L2 Standard ERC721](https://github.com/sam-goldman/optimism-nft-bridge/blob/main/contracts/standards/L2StandardERC721.sol) into an [L2 Custom ERC721](https://github.com/sam-goldman/optimism-nft-bridge/blob/main/contracts/tutorials/l2-custom-erc721/L2CustomERC721.sol). It works in the following way:
+This tutorial will show you how to consolidate NFTs that already exist in an [L2 Standard ERC721](https://github.com/sam-goldman/optimism-nft-bridge/blob/main/contracts/standards/L2StandardERC721.sol) into an [L2 Custom ERC721](https://github.com/sam-goldman/optimism-nft-bridge/blob/main/contracts/tutorials/l2-custom-erc721/L2CustomERC721.sol). Consolidation works without any changes to the current bridge design, and it occurs entirely on L2 (so users don't need to pay any L1 gas fees). It works in the following way:
 
 1. The owner of an NFT in the L2 Standard ERC721 contract uses `safeTransferFrom` to escrow the NFT in the L2 Custom ERC721 contract.
 1. The Custom ERC721 contract automatically mints a new NFT with the same token ID and sends it to the owner (via its `onERC721Received` function).
